@@ -1,0 +1,29 @@
+Waste_Type,Disposal_Method,CO2_Factor_kg_per_kg,Unit,Environmental_Impact,Notes
+Aluminum,Incineration,0.011,kg CO2e per kg waste,Medium,Incineration of aluminum cans
+Aluminum,Landfill,0.022,kg CO2e per kg waste,Medium,Landfill of aluminum cans
+Aluminum,Recycling,0.066,kg CO2e per kg waste,Very Low,Recycling of aluminum cans
+Batteries,Hazardous Recycling,1.2,kg CO2e per kg,Medium,Special collection required
+Clothing/Textiles,Donation/Reuse,0.1,kg CO2e per kg,Very Low,Extending garment lifespan
+Clothing/Textiles,Landfill,3.3,kg CO2e per kg,High,Fast fashion disposal
+Electronics,Recycling,0.022,kg CO2e per kg waste,Very Low,Recycling of portable electronic devices
+Electronics,Landfill,0.022,kg CO2e per kg waste,Medium,Landfill of portable electronic devices
+Electronics,Incineration,0.981,kg CO2e per kg waste,Medium,Incineration of portable electronic devices
+Food Waste,Incineration,0.055,kg CO2e per kg waste,Medium,Incineration of food waste (non-meat)
+Food Waste,Composting,0.121,kg CO2e per kg waste,Very Low,Composting of food waste (non-meat)
+Food Waste,Landfill,0.739,kg CO2e per kg waste,Medium,Landfill of food waste (non-meat)
+Garden Waste,Home Composting,0.15,kg CO2e per kg,Very Low,"Yard trimmings, leaves"
+General Trash,Municipal Waste,0.8,kg CO2e per kg,Medium,Average household refuse
+Glass,Incineration,0.011,kg CO2e per kg waste,Medium,Incineration of glass
+Glass,Landfill,0.022,kg CO2e per kg waste,Medium,Landfill of glass
+Glass,Recycling,0.055,kg CO2e per kg waste,Very Low,Recycling of glass
+Metal,Incineration,0.011,kg CO2e per kg waste,Medium,Incineration of steel cans
+Metal,Landfill,0.022,kg CO2e per kg waste,Medium,Landfill of steel cans
+Metal,Recycling,0.353,kg CO2e per kg waste,Low,Recycling of steel cans
+Mixed Household Waste,Incineration,0.474,kg CO2e per kg waste,Medium,Incineration of mixed msw
+Mixed Household Waste,Landfill,0.639,kg CO2e per kg waste,Medium,Landfill of mixed msw
+Paper,Recycling,0.022,kg CO2e per kg waste,Very Low,Recycling of newspaper
+Paper,Incineration,0.055,kg CO2e per kg waste,Medium,Incineration of newspaper
+Paper,Landfill,0.43,kg CO2e per kg waste,Medium,Landfill of newspaper
+Plastic,Landfill,0.022,kg CO2e per kg waste,Medium,Landfill of mixed plastics
+Plastic,Recycling,0.243,kg CO2e per kg waste,Low,Recycling of mixed plastics
+Plastic,Incineration,2.579,kg CO2e per kg waste,High,Incineration of mixed plastics

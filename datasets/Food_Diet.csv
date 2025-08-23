@@ -1,0 +1,37 @@
+Food_Category,CO2_Factor_kg_per_kg,Unit,Impact_Level,Notes
+Pork,7.2,kg CO2e per kg,High,Moderate livestock emissions
+Turkey,10.9,kg CO2e per kg,High,Higher than chicken due to size/feed conversion
+Prawns/Shrimp,11.8,kg CO2e per kg,High,High impact from farming/trawling
+Cheese (Hard),13.5,kg CO2e per kg,High,"Concentrated dairy product, high methane"
+Chocolate/Sweets,18.7,kg CO2e per kg,High,"Cocoa production, processing, packaging"
+Soft Drinks,0.7,kg CO2e per kg,Low,Packaging and transportation
+Almond Milk,0.7,kg CO2e per kg,Low,Water-intensive but low carbon
+Beans/Lentils,0.9,kg CO2e per kg,Low,"Low impact, nitrogen-fixing crops"
+Oat Milk,0.9,kg CO2e per kg,Low,Lower impact dairy alternative
+Soy Milk,1,kg CO2e per kg,Low,Sustainable dairy alternative
+Pasta,1.1,kg CO2e per kg,Low,"Wheat-based, minimal processing"
+Wheat/Bread,1.4,kg CO2e per kg,Low,Includes processing and transportation
+Berries,1.5,kg CO2e per kg,Low,Higher due to greenhouse growing
+Oats/Cereals,1.6,kg CO2e per kg,Low,Generally low impact grains
+Tomatoes,2.1,kg CO2e per kg,Low-Medium,Higher if greenhouse-grown
+Yogurt,2.2,kg CO2e per kg,Low-Medium,Lower impact than milk due to processing
+Nuts (Mixed),2.3,kg CO2e per kg,Low-Medium,"Varies by type, water-intensive"
+Fish (Wild-caught),2.9,kg CO2e per kg,Medium,Varies by species and fishing method
+Tofu,3,kg CO2e per kg,Medium,Soy processing and transportation
+Vegetable Oils,3.1,kg CO2e per kg,Medium,Various seed oils
+Milk (Dairy),3.2,kg CO2e per kg,Medium,Methane from dairy cows
+Processed Snacks,3.5,kg CO2e per kg,Medium,"Chips, crackers, packaged foods"
+Rice,4,kg CO2e per kg,Medium,Methane from flooded fields
+Eggs,4.2,kg CO2e per kg,Medium,Moderate impact from chicken farming
+Fish (Farmed),5.4,kg CO2e per kg,Medium-High,Higher due to feed production
+Olive Oil,5.4,kg CO2e per kg,Medium-High,Intensive production process
+Chicken,6.1,kg CO2e per kg,Medium-High,Lower than red meat but still significant
+Butter,23.8,kg CO2e per kg,Very High,Very concentrated dairy product
+Lamb/Mutton,24.5,kg CO2e per kg,Very High,Second highest due to ruminant methane emissions
+Beef (Red Meat),27,kg CO2e per kg,Very High,Highest carbon footprint due to methane from cattle
+Citrus Fruits,0.3,kg CO2e per kg,Very Low,Very low impact fruits
+Apples,0.4,kg CO2e per kg,Very Low,"Low impact, seasonal storage"
+Vegetables (Root),0.4,kg CO2e per kg,Very Low,"Potatoes, carrots, onions"
+Vegetables (Leafy),0.5,kg CO2e per kg,Very Low,"Lettuce, spinach, kale"
+Vegetables (Other),0.5,kg CO2e per kg,Very Low,"Broccoli, peppers, etc."
+Bananas,0.7,kg CO2e per kg,Very Low,"Low impact fruit, some transport"

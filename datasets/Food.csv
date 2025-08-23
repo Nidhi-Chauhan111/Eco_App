@@ -1,0 +1,39 @@
+Food_Item,Kg_CO2e_per_kg,Category,Source,Year,Unit
+Apples,0.43,Fruit,Our World in Data,2018,kg CO2e per kg
+Bananas,0.86,Fruit,Our World in Data,2018,kg CO2e per kg
+Barley,1.18,Grain,Our World in Data,2018,kg CO2e per kg
+Beef (beef herd),99.48,Meat,Our World in Data,2018,kg CO2e per kg
+Beef (dairy herd),33.3,Meat,Our World in Data,2018,kg CO2e per kg
+Beet Sugar,1.81,Sugar,Our World in Data,2018,kg CO2e per kg
+Berries & Grapes,1.53,Fruit,Our World in Data,2018,kg CO2e per kg
+Brassicas,0.51,Vegetables,Our World in Data,2018,kg CO2e per kg
+Cane Sugar,3.2,Sugar,Our World in Data,2018,kg CO2e per kg
+Cassava,1.32,,Our World in Data,2018,kg CO2e per kg
+Cheese,23.88,Dairy,Our World in Data,2018,kg CO2e per kg
+Citrus Fruit,0.39,Fruit,Our World in Data,2018,kg CO2e per kg
+Coffee,28.53,Beverage,Our World in Data,2018,kg CO2e per kg
+Dark Chocolate,46.65,Beverage,Our World in Data,2018,kg CO2e per kg
+Eggs,4.67,Dairy,Our World in Data,2018,kg CO2e per kg
+Fish (farmed),13.63,Seafood,Our World in Data,2018,kg CO2e per kg
+Groundnuts,3.23,Nuts & Pulses,Our World in Data,2018,kg CO2e per kg
+Lamb & Mutton,39.72,Meat,Our World in Data,2018,kg CO2e per kg
+Maize,1.7,Grain,Our World in Data,2018,kg CO2e per kg
+Milk,3.15,Dairy,Our World in Data,2018,kg CO2e per kg
+Nuts,0.43,Nuts & Pulses,Our World in Data,2018,kg CO2e per kg
+Oatmeal,2.48,Grain,Our World in Data,2018,kg CO2e per kg
+Onions & Leeks,0.5,Vegetables,Our World in Data,2018,kg CO2e per kg
+Other Fruit,1.05,Fruit,Our World in Data,2018,kg CO2e per kg
+Other Pulses,1.79,Nuts & Pulses,Our World in Data,2018,kg CO2e per kg
+Other Vegetables,0.53,Vegetables,Our World in Data,2018,kg CO2e per kg
+Peas,0.98,Nuts & Pulses,Our World in Data,2018,kg CO2e per kg
+Pig Meat,12.31,Meat,Our World in Data,2018,kg CO2e per kg
+Potatoes,0.46,Vegetables,Our World in Data,2018,kg CO2e per kg
+Poultry Meat,9.87,Meat,Our World in Data,2018,kg CO2e per kg
+Prawns (farmed),26.87,Seafood,Our World in Data,2018,kg CO2e per kg
+Rice,4.45,Grain,Our World in Data,2018,kg CO2e per kg
+Root Vegetables,0.43,Vegetables,Our World in Data,2018,kg CO2e per kg
+Soy milk,0.98,Dairy,Our World in Data,2018,kg CO2e per kg
+Tofu,3.16,Dairy,Our World in Data,2018,kg CO2e per kg
+Tomatoes,2.09,Vegetables,Our World in Data,2018,kg CO2e per kg
+Wheat & Rye,1.57,Grain,Our World in Data,2018,kg CO2e per kg
+Wine,1.79,Beverage,Our World in Data,2018,kg CO2e per kg

@@ -1,0 +1,11 @@
+Energy_Source,CO2_Factor,Unit,Usage_Type,Notes
+Natural Gas,0.05444,kg CO2 per scf,"Home heating, cooking, water heating",Most common household gas fuel
+Propane Gas,0.15463,kg CO2 per scf,"Heating, cooking",Propane in gaseous form
+Propane (LPG),5.72,kg CO2 per gallon,"Heating, cooking, BBQ",Liquefied petroleum gas
+Heating Oil (No. 2),10.21,kg CO2 per gallon,Home heating,Common heating oil for residential use
+Gasoline (for generators),8.78,kg CO2 per gallon,Backup generators,Home backup power generation
+Electricity (US Grid Average),0.35,kg CO2 per kWh,Home electricity,US national average: 771.523 lb CO2/MWh
+Electricity (Coal-heavy),0.82,kg CO2 per kWh,Home electricity,Coal-dominant grid regions
+Electricity (Natural Gas),0.49,kg CO2 per kWh,Home electricity,Gas-dominant grid regions
+Electricity (Renewable),0.08,kg CO2 per kWh,Home electricity,Renewable-dominant regions
+Solar PV (Rooftop),0.01,kg CO2 per kWh,Home electricity,Residential solar panels

@@ -1,0 +1,7 @@
+File,Description,Record_Count
+MVP_Transportation.csv,Transportation modes with CO2 factors per km,18
+MVP_Energy_Usage.csv,"Home energy sources (electricity, gas, oil) with CO2 factors",10
+MVP_Food_Diet.csv,Food categories with CO2 factors per kg,36
+MVP_Waste_Consumption.csv,Waste disposal methods with CO2 factors per kg,28
+MVP_Household_Appliances.csv,Common appliances with energy consumption and CO2 impact,28
+MVP_Conversion_Factors.csv,Quick lookup table for common carbon footprint calculations,43

@@ -1,0 +1,29 @@
+Appliance,Power_Rating_W,Typical_Usage_Hours_per_Day,kWh_per_Day,kWh_per_Month,Category,Notes,kWh_per_Year,CO2_kg_per_Year_US_Grid,CO2_kg_per_Year_Clean_Grid
+Vacuum Cleaner,1200,0.17,0.2,6,Cleaning,10 minutes daily cleaning,72,25.2,5.8
+Central Air Conditioning,3500,8,28,840,Climate,High consumption in summer,10080,3528,806.4
+Heat Pump,2000,10,20,600,Climate,Efficient heating/cooling,7200,2520,576
+Air Conditioner (Room),1200,8,9.6,288,Climate,"Summer cooling, seasonal",3456,1209.6,276.5
+Electric Heater (Space),1500,6,9,270,Climate,Winter heating supplement,3240,1134,259.2
+Ceiling Fan,75,8,0.6,18,Climate,Energy efficient cooling,216,75.6,17.3
+Desktop Computer,300,6,1.8,54,Electronics,6 hours work/personal use,648,226.8,51.8
+LED TV (55 inch),100,5,0.5,15,Electronics,5 hours daily viewing,180,63,14.4
+Gaming Console,150,3,0.45,13.5,Electronics,3 hours daily gaming,162,56.7,13
+Laptop Computer,65,6,0.39,11.7,Electronics,More efficient than desktop,140.4,49.1,11.2
+Sound System,100,3,0.3,9,Electronics,Music/entertainment,108,37.8,8.6
+WiFi Router,10,24,0.24,7.2,Electronics,Always on,86.4,30.2,6.9
+Phone Charger,5,2,0.01,0.3,Electronics,2 hours charging daily,3.6,1.3,0.3
+Refrigerator,150,24,3.6,108,Kitchen,"Always on, varies by size/efficiency",1296,453.6,103.7
+Dishwasher,1800,1,1.8,54,Kitchen,Daily use household,648,226.8,51.8
+Electric Oven,2400,0.5,1.2,36,Kitchen,30 minutes daily cooking,432,151.2,34.6
+Coffee Maker,900,0.33,0.3,9,Kitchen,20 minutes daily brewing,108,37.8,8.6
+Microwave,1000,0.25,0.25,7.5,Kitchen,15 minutes daily use,90,31.5,7.2
+Electric Kettle,1500,0.17,0.25,7.5,Kitchen,10 minutes daily use,90,31.5,7.2
+Electric Dryer,3000,1,3,90,Laundry,High energy use,1080,378,86.4
+Washing Machine,500,1,0.5,15,Laundry,Daily wash cycle,180,63,14.4
+Iron,1200,0.17,0.2,6,Laundry,10 minutes daily,72,25.2,5.8
+Halogen Bulbs (10 bulbs),400,5,2,60,Lighting,Less efficient than LED,720,252,57.6
+LED Bulbs (10 bulbs),100,5,0.5,15,Lighting,"10W per bulb, 5 hours average",180,63,14.4
+Hair Dryer,1500,0.17,0.25,7.5,Personal Care,10 minutes daily use,90,31.5,7.2
+Electric Toothbrush Charger,3,24,0.072,2.16,Personal Care,Very low consumption,25.92,9.1,2.1
+Electric Water Heater,4000,3,12,360,Water Heating,Second highest energy use,4320,1512,345.6
+Tankless Water Heater,18000,0.5,9,270,Water Heating,"On-demand, more efficient",3240,1134,259.2

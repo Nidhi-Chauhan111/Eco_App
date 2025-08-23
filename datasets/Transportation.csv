@@ -1,0 +1,19 @@
+Transport_Mode,Fuel_Type,CO2_Factor_kg_per_km,Original_Unit,Usage_Type,Notes
+Bicycle,Human Power,0.0,per km,Distance-based,Zero direct emissions
+Car (Diesel),Diesel Fuel,0.2,per km,Distance-based,Diesel passenger car
+Car (Petrol),Motor Gasoline,0.1845,vehicle-mile,Distance-based,Personal car
+Car (SUV/Pickup),Motor Gasoline,0.2448,vehicle-mile,Distance-based,SUV or pickup truck
+Electric Bus,Electricity,0.03,per km,Distance-based,Electric public bus
+Electric Car (EV),Electricity,0.05,per km,Distance-based,Depends on electricity grid mix
+Flight (Domestic),Jet Fuel,0.1286,passenger-mile,Distance-based,Flights under 300 miles
+Flight (International),Jet Fuel,0.1013,passenger-mile,Distance-based,Flights over 2300 miles
+Flight (Medium Haul),Jet Fuel,0.0802,passenger-mile,Distance-based,Flights 300-2300 miles
+Hybrid Car,Petrol+Electric,0.12,per km,Distance-based,Hybrid electric vehicle
+Motorcycle,Motor Gasoline,0.2287,vehicle-mile,Distance-based,Motorcycle/scooter
+Public Bus,Diesel Fuel,0.041,passenger-mile,Distance-based,City/intercity bus
+Train (High-speed),Electricity,0.0143,passenger-mile,Distance-based,Amtrak Northeast Corridor
+Train (Regular),Electricity/Diesel,0.0926,passenger-mile,Distance-based,Long-distance train
+Train (Regular),Electricity/Diesel,0.0597,passenger-mile,Distance-based,Long-distance train
+Train (Regular),Electricity/Diesel,0.0826,passenger-mile,Distance-based,Long-distance train
+Train (Regular),Electricity/Diesel,0.0578,passenger-mile,Distance-based,Long-distance train
+Walking,Human Power,0.0,per km,Distance-based,Zero direct emissions
