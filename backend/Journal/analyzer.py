@@ -51,7 +51,7 @@ class EcoJournalAnalyzer:
         
         try:
             # Get emotion predictions
-            raw_emotions = self.emotion_classifier(text)
+            raw_emotions = self.emotion_classifier(text)[0]
             
             # Filter significant emotions
             significant_emotions = [
