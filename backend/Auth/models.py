@@ -8,7 +8,9 @@ from sqlalchemy.orm import relationship
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import Base from Journal
-from Database.Journal import Base
+#from Database.Journal import Base
+from Database.db import Base
+
 
 
 class User(Base):

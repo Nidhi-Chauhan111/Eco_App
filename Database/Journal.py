@@ -1,15 +1,18 @@
 # Database/Journal.py
 # Database models and connections for Eco-Journal
 
+import importlib
 import os
 from datetime import datetime, date
 from typing import Optional, List, Dict, Any
 import uuid
+from Database.db import Base, engine  # Import shared Base & engine
 
 # PostgreSQL imports
 from sqlalchemy import create_engine, Column, String, Integer, Float, Boolean, DateTime, Date, Text, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
 # MongoDB imports
@@ -22,10 +25,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # PostgreSQL Configuration
-POSTGRES_URL = os.getenv("POSTGRES_URL") #make changes after installation
-engine = create_engine(POSTGRES_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+#POSTGRES_URL = os.getenv("POSTGRES_URL") #make changes after installation
+#engine = create_engine(POSTGRES_URL)
+#SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+#Base = declarative_base()
 
 # MongoDB Configuration
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/")
@@ -76,6 +79,7 @@ class Achievement(Base):
     earned_at = Column(DateTime, default=datetime.utcnow)
     streak_count_when_earned = Column(Integer, nullable=True)
 
+
 class DatabaseManager:
     """Manages both PostgreSQL and MongoDB connections"""
     
@@ -84,10 +88,24 @@ class DatabaseManager:
         self.mongo_collection = journal_collection
         self.setup_postgres()
         self.setup_mongodb()
+
+    
     
     def setup_postgres(self):
         """Initialize PostgreSQL connection and create tables"""
         try:
+
+            
+            # Dynamically import other modules that define models so SQLAlchemy knows them.
+        # Use full package path that matches your project (adjust if needed).
+            try:
+                importlib.import_module("backend.Auth.models")
+                print("✅ Imported backend.Auth.models")
+            except Exception as e:
+            # show a helpful message but continue — if import fails, create_all won't include those models
+                print(f"⚠️ Could not import backend.Auth.models: {e}")
+            
+            from Database.db import Base, engine, SessionLocal
             Base.metadata.create_all(bind=engine)
             self.postgres_session = SessionLocal()
             print("✅ PostgreSQL connection established")
@@ -331,6 +349,12 @@ class AchievementRepository:
         return new_achievements
 
 # Initialize database manager
+
+# Import User model so SQLAlchemy knows about it
+from backend.Auth.models import User
+
+# Create all tables in the database
+Base.metadata.create_all(bind=engine)
 db_manager = DatabaseManager()
 
 # Factory functions for repositories
@@ -345,3 +369,12 @@ def get_journal_repository() -> JournalRepository:
 
 def get_achievement_repository() -> AchievementRepository:
     return AchievementRepository(db_manager.get_postgres_session())
+
+
+# Function to get the database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
