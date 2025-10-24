@@ -5,6 +5,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from Database.Journal import Base, SessionLocal
 from Database.Journal import get_db
 from backend.Auth import service
 from backend.Auth.schemas import UserCreate, UserLogin  # ✅ import from schemas.py

@@ -25,10 +25,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # PostgreSQL Configuration
-#POSTGRES_URL = os.getenv("POSTGRES_URL") #make changes after installation
-#engine = create_engine(POSTGRES_URL)
-#SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-#Base = declarative_base()
+POSTGRES_URL = os.getenv("POSTGRES_URL") #make changes after installation
+engine = create_engine(POSTGRES_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
 # MongoDB Configuration
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/")
