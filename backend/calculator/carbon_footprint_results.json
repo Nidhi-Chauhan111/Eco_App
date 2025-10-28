@@ -1,22 +1,33 @@
 {
   "transportation": {
-    "weekly_kg_co2": 0,
-    "annual_kg_co2": 0,
-    "inputs": {}
+    "weekly_kg_co2": 10.845,
+    "annual_kg_co2": 563.94,
+    "inputs": {
+      "car": {
+        "type": "Car (Diesel)",
+        "km_per_week": 45.0
+      },
+      "bus": {
+        "km_per_week": 45.0
+      }
+    }
   },
   "energy": {
-    "monthly_kg_co2": 560.0,
-    "annual_kg_co2": 6720.0,
+    "monthly_kg_co2": 61.052,
+    "annual_kg_co2": 732.624,
     "inputs": {
       "electricity": {
-        "kwh_per_month": 1600.0,
+        "kwh_per_month": 50.0,
         "grid_type": "Electricity (US Grid Average)"
+      },
+      "natural_gas": {
+        "scf_per_month": 800.0
       }
     }
   },
   "food": {
-    "weekly_kg_co2": 0.0,
-    "annual_kg_co2": 0.0,
+    "weekly_kg_co2": 57.599999999999994,
+    "annual_kg_co2": 2995.2,
     "inputs": {
       "meat": {
         "beef": 0.0,
@@ -25,29 +36,29 @@
         "fish": 0.0
       },
       "dairy": {
-        "milk": 0.0,
+        "milk": 15.0,
         "cheese": 0.0
       },
       "plants": {
-        "vegetables": 0.0,
-        "fruits": 0.0,
-        "grains": 0.0
+        "vegetables": 7.0,
+        "fruits": 4.0,
+        "grains": 1.0
       }
     }
   },
   "waste": {
-    "weekly_kg_co2": 6.042,
-    "annual_kg_co2": 314.18399999999997,
+    "weekly_kg_co2": 3.582,
+    "annual_kg_co2": 186.26399999999998,
     "inputs": {
       "levels": {
         "plastic": "medium",
         "paper": "low",
         "glass": "low",
-        "metal": "medium",
-        "organic": "high"
+        "metal": "low",
+        "organic": "medium"
       },
       "recycling": {
-        "plastic": "no",
+        "plastic": "yes",
         "paper": "yes",
         "glass": "yes",
         "metal": "yes"
@@ -55,5 +66,5 @@
       "compost": "no"
     }
   },
-  "total_annual_kg_co2": 7034.184
+  "total_annual_kg_co2": 4478.028
 }

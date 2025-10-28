@@ -99,15 +99,77 @@ export default function Login({ onLogin }) {
   const toggleForm = () => setShowSignup((prev) => !prev);
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  const handleLogin = (event) => {
-    event.preventDefault();
-    if (onLogin) onLogin({ name: loginEmail || "Aishwarya Panda" });
-  };
+ //  SIGNUP HANDLER
+const handleSignup = async (event) => {
+  event.preventDefault();
 
-  const handleSignup = (event) => {
-    event.preventDefault();
-    setShowSignup(false);
-  };
+  try {
+    const response = await fetch("http://127.0.0.1:8000/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: signupName,
+        email: signupEmail,
+        password: signupPassword,
+      }),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      alert(`Signup failed: ${errData.detail || response.statusText}`);
+      return;
+    }
+
+    const data = await response.json();
+    alert(` Signup successful! Welcome, ${data.user}`);
+    setShowSignup(false); // switch to login form
+
+    // Reset form
+    setSignupName("");
+    setSignupEmail("");
+    setSignupPassword("");
+
+  } catch (error) {
+    console.error("Signup Error:", error);
+    alert("Signup failed. Please check your backend connection.");
+  }
+};
+
+//  LOGIN HANDLER
+const handleLogin = async (event) => {
+  event.preventDefault();
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: loginEmail,
+        password: loginPassword,
+      }),
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      alert(`Login failed: ${errData.detail || response.statusText}`);
+      return;
+    }
+
+    const data = await response.json();
+    alert(" Login successful!");
+
+    if (onLogin) onLogin({ name: loginEmail });
+    localStorage.setItem("token", data.access_token); // Save token for later requests
+
+    // Reset form
+    setLoginEmail("");
+    setLoginPassword("");
+
+  } catch (error) {
+    console.error("Login Error:", error);
+    alert(" Login failed. Please check your backend connection.");
+  }
+};
 
   const containerStyle = {
     minHeight: "100vh",
