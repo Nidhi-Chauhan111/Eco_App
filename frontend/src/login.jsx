@@ -1,357 +1,140 @@
 import React, { useState } from "react";
-import Navbar from "./Navbar";
-import carbonFootprintImg from "./carbon-footprint.jpg"; // Ensure this exists!
+import { useNavigate } from "react-router-dom";
+import "./App.css";
 
-const FloatingLabelInput = ({
-  label,
-  id,
-  type = "text",
-  value,
-  onChange,
-  required = false,
-  showPasswordToggle = false,
-}) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+function Login() {
+  const [isSignup, setIsSignup] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const floatLabel = isFocused || value.length > 0;
-  const inputType = showPasswordToggle ? (showPassword ? "text" : "password") : type;
+  // 🔹 SIGNUP HANDLER
+  const handleSignup = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: fullName,
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        alert(`Signup failed: ${errData.detail || response.statusText}`);
+        return;
+      }
+
+      const data = await response.json();
+      alert(`Signup successful! Welcome, ${data.user}`);
+      setIsSignup(false); // switch to login form
+
+      // reset form fields
+      setFullName("");
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      console.error("Signup Error:", error);
+      alert("Signup failed. Please check your backend connection.");
+    }
+  };
+
+  // 🔹 LOGIN HANDLER
+  const handleLogin = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        alert(`Login failed: ${errData.detail || response.statusText}`);
+        return;
+      }
+
+      const data = await response.json();
+      alert("Login successful!");
+      localStorage.setItem("token", data.access_token);
+
+      // reset fields
+      setEmail("");
+      setPassword("");
+      navigate("/dashboard"); // redirect after login
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Login failed. Please check your backend connection.");
+    }
+  };
 
   return (
-    <div style={{ position: "relative", marginBottom: 24 }}>
-      <input
-        id={id}
-        type={inputType}
-        value={value}
-        onChange={onChange}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        required={required}
-        className="fancy-input"
-        style={{
-          width: "100%",
-          padding: showPasswordToggle ? "15px 40px 15px 15px" : "15px",
-          fontSize: 17,
-          borderRadius: 11,
-          border: "1.8px solid #b9f0d8",
-          background: "#fafffb",
-          boxSizing: "border-box",
-          transition: "border-color .21s, box-shadow .2s, background 0.17s"
-        }}
-      />
-      <label
-        htmlFor={id}
-        style={{
-          position: "absolute",
-          left: 18,
-          top: floatLabel ? -12 : 17,
-          fontSize: floatLabel ? 12 : 17,
-          color: "#12916B",
-          fontWeight: "bold",
-          backgroundColor: "#fafffb",
-          padding: "0 7px",
-          borderRadius: 7,
-          transition: "all 0.2s cubic-bezier(.8,.32,0,1)",
-          pointerEvents: "none",
-          userSelect: "none",
-        }}
-      >
-        {label}
-      </label>
-      {showPasswordToggle && (
-        <button
-          type="button"
-          onClick={() => setShowPassword((s) => !s)}
-          aria-label={showPassword ? "Hide password" : "Show password"}
-          style={{
-            position: "absolute",
-            right: 13,
-            top: "53%",
-            transform: "translateY(-50%)",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: "#006e4e",
-            fontWeight: "bold",
-            userSelect: "none",
-            fontSize: 19,
-            opacity: 0.8,
-            transition: "opacity .18s"
-          }}
+    <div className="auth-container">
+      <div className="auth-card slide-in">
+        <h2>{isSignup ? "Create Account" : "Welcome Back"}</h2>
+
+        <form
+          className="auth-form"
+          onSubmit={isSignup ? handleSignup : handleLogin}
         >
-          {showPassword ? "🙈" : "👁️"}
-        </button>
-      )}
-    </div>
-  );
-};
-
-export default function Login({ onLogin }) {
-  const [showSignup, setShowSignup] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [signupName, setSignupName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-
-  const toggleForm = () => setShowSignup((prev) => !prev);
-  const toggleDarkMode = () => setDarkMode((prev) => !prev);
-
- //  SIGNUP HANDLER
-const handleSignup = async (event) => {
-  event.preventDefault();
-
-  try {
-    const response = await fetch("http://127.0.0.1:8000/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: signupName,
-        email: signupEmail,
-        password: signupPassword,
-      }),
-    });
-
-    if (!response.ok) {
-      const errData = await response.json();
-      alert(`Signup failed: ${errData.detail || response.statusText}`);
-      return;
-    }
-
-    const data = await response.json();
-    alert(` Signup successful! Welcome, ${data.user}`);
-    setShowSignup(false); // switch to login form
-
-    // Reset form
-    setSignupName("");
-    setSignupEmail("");
-    setSignupPassword("");
-
-  } catch (error) {
-    console.error("Signup Error:", error);
-    alert("Signup failed. Please check your backend connection.");
-  }
-};
-
-//  LOGIN HANDLER
-const handleLogin = async (event) => {
-  event.preventDefault();
-
-  try {
-    const response = await fetch("http://127.0.0.1:8000/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: loginEmail,
-        password: loginPassword,
-      }),
-    });
-
-    if (!response.ok) {
-      const errData = await response.json();
-      alert(`Login failed: ${errData.detail || response.statusText}`);
-      return;
-    }
-
-    const data = await response.json();
-    alert(" Login successful!");
-
-    if (onLogin) onLogin({ name: loginEmail });
-    localStorage.setItem("token", data.access_token); // Save token for later requests
-
-    // Reset form
-    setLoginEmail("");
-    setLoginPassword("");
-
-  } catch (error) {
-    console.error("Login Error:", error);
-    alert(" Login failed. Please check your backend connection.");
-  }
-};
-
-  const containerStyle = {
-    minHeight: "100vh",
-    paddingTop: "65px", // Padding for navbar (navbar is 60px height)
-    backgroundColor: darkMode ? "#121212" : "transparent",
-    color: darkMode ? "#ddd" : "#126644",
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 60,
-    padding: "50px",
-    paddingTop: "115px", // Adds space for fixed nav
-    transition: "all 0.3s",
-    background: darkMode
-      ? "#121212"
-      : "linear-gradient(120deg,#f9fafb 0,#ddf3e4 50%,#ecfdf3 100%)",
-  };
-
-  const leftPanelStyle = {
-    maxWidth: 410,
-    backgroundColor: darkMode ? "#133822" : "#e6f3da",
-    borderRadius: 28,
-    padding: 36,
-    boxShadow: "0 8px 28px #b2e2c98a",
-    textAlign: "center",
-    userSelect: "none",
-    minHeight: 370,
-  };
-
-  const rightPanelStyle = {
-    width: 300,
-    backgroundColor: darkMode ? "#1d3e27" : "#fff",
-    borderRadius: 28,
-    padding: 36,
-    boxShadow: "0 8px 28px #b2e2c98a",
-    color: darkMode ? "#caeabe" : "#207332",
-    userSelect: "none",
-    minHeight: 300,
-  };
-
-  const buttonStyle = {
-    width: "100%",
-    padding: 12,
-    borderRadius: 13,
-    border: "none",
-    backgroundColor: "#2b7a3b",
-    color: "white",
-    cursor: "pointer",
-    fontWeight: "bold",
-    fontSize: 17
-  };
-
-  const linkStyle = {
-    marginTop: 15,
-    color: darkMode ? "#a7d99e" : "#2b7b32",
-    cursor: "pointer",
-    fontWeight: "600",
-    textAlign: "center",
-    fontSize: 15,
-    userSelect: "none",
-  };
-
-  return (
-    <>
-      <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-      <div style={containerStyle}>
-        {/* Info Panel */}
-        <div className="animated-card" style={leftPanelStyle}>
-          <img
-            src={carbonFootprintImg}
-            alt="Carbon Footprint"
-            style={{
-              width: 110,
-              marginBottom: 25,
-              borderRadius: 10,
-              boxShadow: "0 2px 10px #b2e2caa1"
-            }}
+          {isSignup && (
+            <input
+              type="text"
+              placeholder="Full Name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+          )}
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
-          <h2 style={{ margin: "16px 0 11px", fontSize: 27, fontWeight: "bold" }}>
-            What is a Carbon Footprint?
-          </h2>
-          <p style={{ marginTop: 15, lineHeight: 1.58, fontWeight: "500" }}>
-            Your carbon footprint measures the greenhouse gases your daily activities create,
-            such as eating, traveling, and energy use.
-            By making sustainable choices, you help protect the planet.
-          </p>
-          <button
-            onClick={toggleDarkMode}
-            style={{
-              marginTop: 30,
-              padding: "13px 20px",
-              borderRadius: 16,
-              border: "none",
-              background:
-                darkMode
-                  ? "linear-gradient(90deg,#4c9c60 10%,#4daf73 90%)"
-                  : "linear-gradient(90deg,#1da549 10%,#2bb550 90%)",
-              color: "#fff",
-              cursor: "pointer",
-              fontWeight: "bold",
-              fontSize: 17,
-              boxShadow: "0 4px 15px #8bceac95"
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit" className="auth-btn">
+            {isSignup ? "Sign Up" : "Login"}
+          </button>
+        </form>
+
+        <p className="toggle-text">
+          {isSignup ? "Already have an account?" : "Don’t have an account?"}{" "}
+          <span
+            onClick={() => {
+              setIsSignup(!isSignup);
+              setFullName("");
+              setEmail("");
+              setPassword("");
             }}
           >
-            {darkMode ? "Light Mode" : "Dark Mode"} 🌙
-          </button>
-        </div>
+            {isSignup ? "Login" : "Sign Up"}
+          </span>
+        </p>
 
-        {/* Right Panel */}
-        <div className="animated-card animated-card--delay" style={rightPanelStyle}>
-          {showSignup ? (
-            <>
-              <h2 style={{ textAlign: "center", marginBottom: 18, fontWeight: "bold", fontSize: 25 }}>
-                Sign Up 🌿
-              </h2>
-              <form onSubmit={handleSignup}>
-                <FloatingLabelInput
-                  label="Full Name"
-                  id="signup-name"
-                  value={signupName}
-                  onChange={e => setSignupName(e.target.value)}
-                  required
-                />
-                <FloatingLabelInput
-                  label="Email"
-                  id="signup-email"
-                  type="email"
-                  value={signupEmail}
-                  onChange={e => setSignupEmail(e.target.value)}
-                  required
-                />
-                <FloatingLabelInput
-                  label="Password"
-                  id="signup-password"
-                  type="password"
-                  value={signupPassword}
-                  onChange={e => setSignupPassword(e.target.value)}
-                  required
-                  showPasswordToggle
-                />
-                <button type="submit" style={buttonStyle}>
-                  Sign Up
-                </button>
-              </form>
-              <div onClick={toggleForm} style={linkStyle}>
-                Already have an account? Log In
-              </div>
-            </>
-          ) : (
-            <>
-              <h2 style={{ textAlign: "center", marginBottom: 18, fontWeight: "bold", fontSize: 25 }}>
-                Login 🌿
-              </h2>
-              <form onSubmit={handleLogin}>
-                <FloatingLabelInput
-                  label="Email or Username"
-                  id="login-email"
-                  value={loginEmail}
-                  onChange={e => setLoginEmail(e.target.value)}
-                  required
-                />
-                <FloatingLabelInput
-                  label="Password"
-                  id="login-password"
-                  type="password"
-                  value={loginPassword}
-                  onChange={e => setLoginPassword(e.target.value)}
-                  required
-                  showPasswordToggle
-                />
-                <button type="submit" style={buttonStyle}>
-                  Login
-                </button>
-              </form>
-              <div onClick={toggleForm} style={linkStyle}>
-                Don't have an account? Sign Up
-              </div>
-            </>
-          )}
-        </div>
+        <button className="back-btn" onClick={() => navigate("/")}>
+          ⬅ Back to Home
+        </button>
       </div>
-    </>
+    </div>
   );
 }
+
+export default Login;
