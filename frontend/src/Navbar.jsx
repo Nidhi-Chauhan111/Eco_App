@@ -1,22 +1,30 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+// src/Navbar.jsx
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import "./App.css";
 
-export default function Navbar({ darkMode, toggleDarkMode }) {
+export default function Navbar({ theme, toggleTheme }) {
+  const location = useLocation();
+
+  const linkClass = (path) =>
+    "nav-link" + (location.pathname === path ? " active-link" : "");
+
   return (
-    <nav className={`top-navbar${darkMode ? ' dark' : ''}`}>
-      <div className="nav-left">
-        <span className="brand" role="img" aria-label="EcoTrack">🌿 EcoTrack</span>
-        <NavLink to="/page1" className="nav-link" activeclassname="active">Page 1</NavLink>
-        <NavLink to="/page2" className="nav-link" activeclassname="active">Page 2</NavLink>
-        <NavLink to="/page3" className="nav-link" activeclassname="active">Page 3</NavLink>
+    <nav className="navbar">
+      <div className="logo">🌿 EcoTrack</div>
+      <div className="links">
+        <Link to="/" className={linkClass("/")}>Home</Link>
+        <Link to="/calculator" className={linkClass("/calculator")}>Calculator</Link>
+        <Link to="/suggestions" className={linkClass("/suggestions")}>Suggestions</Link>
+        <button
+          onClick={toggleTheme}
+          aria-label="Toggle theme"
+          className="theme-toggle"
+          title="Toggle theme"
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
       </div>
-      <button
-        className="dark-toggle-btn"
-        onClick={toggleDarkMode}
-        aria-label={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-      >
-        {darkMode ? '☀️' : '🌙'}
-      </button>
     </nav>
   );
 }
