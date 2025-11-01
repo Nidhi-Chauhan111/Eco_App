@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import json
 from typing import Dict, List, Tuple
@@ -11,19 +12,24 @@ class DataLoader:
         self.load_all_data()
     
     def load_all_data(self):
-
         """Load all CSV files into memory"""
         try:
-            self.data['transportation'] = pd.read_csv('data\Transportation.csv')
-            self.data['energy'] = pd.read_csv('data/Energy_Usage.csv')
-            self.data['food'] = pd.read_csv('data/Food_Diet.csv')
-            self.data['waste'] = pd.read_csv('data/Waste_Consumption.csv')
-            self.data['appliances'] = pd.read_csv('data/Household_Appliances.csv')
-            self.data['conversions'] = pd.read_csv('data/MVP_Conversion_Factors.csv')
+            # find the directory of this file (backend/calculator)
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            data_dir = os.path.join(base_dir, "data")
+
+            # use os.path.join for OS-safe paths
+            self.data['transportation'] = pd.read_csv(os.path.join(data_dir, "Transportation.csv"))
+            self.data['energy'] = pd.read_csv(os.path.join(data_dir, "Energy_Usage.csv"))
+            self.data['food'] = pd.read_csv(os.path.join(data_dir, "Food_Diet.csv"))
+            self.data['waste'] = pd.read_csv(os.path.join(data_dir, "Waste_Consumption.csv"))
+            self.data['appliances'] = pd.read_csv(os.path.join(data_dir, "Household_Appliances.csv"))
+            self.data['conversions'] = pd.read_csv(os.path.join(data_dir, "MVP_Conversion_Factors.csv"))
+
             print("✅ All emission factor datasets loaded successfully!")
         except FileNotFoundError as e:
             print(f"❌ Error loading data files: {e}")
-            print("➡️ Make sure all CSV files are in the data directory")
+            print("➡️ Make sure all CSV files are in backend/calculator/data directory")
             return False
         return True
 
@@ -248,7 +254,8 @@ class EnergyCalculator(CategoryCalculator):
             lpg_factor = self.factors.get('Propane (LPG)', 5.72)
             monthly_emissions += inputs['lpg']['gallons_per_month'] * lpg_factor
 
-        return monthly_emissions
+        weekly_emissions = monthly_emissions * (12 / 52)
+        return weekly_emissions
 
     def get_recommendations(self, emissions: float, inputs: Dict) -> List[str]:
         recommendations = []
@@ -397,8 +404,8 @@ class CarbonFootprintCalculator:
         energy_inputs = self.energy_calc.collect_user_input()
         energy_emissions = self.energy_calc.calculate_emissions(energy_inputs)
         self.results['energy'] = {
-            'monthly_kg_co2': energy_emissions,
-            'annual_kg_co2': energy_emissions * 12,
+            'weekly_kg_co2': energy_emissions,
+            'annual_kg_co2': energy_emissions * 52,
             'inputs': energy_inputs
         }
 
@@ -493,7 +500,7 @@ class CarbonFootprintCalculator:
         )
 
         energy_recs = self.energy_calc.get_recommendations(
-            self.results['energy']['monthly_kg_co2'],
+            self.results['energy']['weekly_kg_co2'],
             self.results['energy']['inputs']
         )
 
@@ -513,13 +520,111 @@ class CarbonFootprintCalculator:
             print(f"{i}. {rec}")
 
     def save_results(self):
-        """Save results to JSON file"""
+        """Save results to JSON file with summary statistics"""
         try:
+            # --- Compute new summary metrics ---
+            weekly_totals = {
+                "transportation": self.results['transportation'].get('weekly_kg_co2', 0),
+                "food": self.results['food'].get('weekly_kg_co2', 0),
+                "waste": self.results['waste'].get('weekly_kg_co2', 0),
+                "energy": self.results['energy'].get('weekly_kg_co2', 0) 
+            }
+
+            total_weekly_kg_co2 = sum(weekly_totals.values())
+            category_with_highest = max(weekly_totals, key=weekly_totals.get)
+
+            # --- Compare to last saved result (if any) ---
+            previous_week_total = None
+            change_from_last_week_percent = None
+
+            if os.path.exists('carbon_footprint_results.json'):
+                with open('carbon_footprint_results.json', 'r') as f:
+                    prev_data = json.load(f)
+                    prev_summary = prev_data.get("summary", {})
+                    previous_week_total = prev_summary.get("total_weekly_kg_co2")
+
+            if previous_week_total:
+                change_from_last_week_percent = (
+                    ((total_weekly_kg_co2 - previous_week_total) / previous_week_total) * 100
+                )
+
+            # --- Add new fields ---
+            self.results["summary"] = {
+                "total_weekly_kg_co2": round(total_weekly_kg_co2, 2),
+                "change_from_last_week_percent": round(change_from_last_week_percent, 2) if change_from_last_week_percent else None,
+                "category_with_highest_emission": category_with_highest
+            }
+
+            # --- Save updated JSON ---
             with open('carbon_footprint_results.json', 'w') as f:
                 json.dump(self.results, f, indent=2)
+
             print(f"\n💾 Results saved to 'carbon_footprint_results.json'")
+            print(f"📊 Weekly total: {total_weekly_kg_co2:.2f} kg CO₂")
+            print(f"🏆 Highest category: {category_with_highest}")
+            if change_from_last_week_percent is not None:
+                print(f"📈 Change from last week: {change_from_last_week_percent:.2f}%")
+
         except Exception as e:
             print(f"❌ Error saving results: {e}")
+    
+    def calculate_from_payload(self, payload: dict):
+        """
+        Calculate carbon footprint directly from JSON payload (for API use)
+        """
+        try:
+            # Extract category inputs from payload
+            transport_inputs = payload.get("transportation", {})
+            energy_inputs = payload.get("energy", {})
+            food_inputs = payload.get("food", {})
+            waste_inputs = payload.get("waste", {})
+
+            # Calculate emissions for each category
+            transport_emissions = self.transport_calc.calculate_emissions(transport_inputs)
+            energy_emissions = self.energy_calc.calculate_emissions(energy_inputs)
+            food_emissions = self.food_calc.calculate_emissions(food_inputs)
+            waste_emissions = self.waste_calc.calculate_emissions(waste_inputs)
+
+            # Combine all results
+            results = {
+                "transportation": {
+                    "weekly_kg_co2": transport_emissions,
+                    "annual_kg_co2": transport_emissions * 52,
+                },
+                "energy": {
+                    "weekly_kg_co2": energy_emissions,
+                    "annual_kg_co2": energy_emissions * 52,
+                },
+                "food": {
+                    "weekly_kg_co2": food_emissions,
+                    "annual_kg_co2": food_emissions * 52,
+                },
+                "waste": {
+                    "weekly_kg_co2": waste_emissions,
+                    "annual_kg_co2": waste_emissions * 52,
+                },
+            }
+
+            total_weekly = (
+                transport_emissions + energy_emissions + food_emissions + waste_emissions
+            )
+            total_annual = total_weekly * 52
+
+            results["summary"] = {
+                "total_weekly_kg_co2": total_weekly,
+                "total_annual_kg_co2": total_annual,
+                "highest_category": max(
+                    results,
+                    key=lambda x: results[x].get("weekly_kg_co2", 0),
+                ),
+            }
+
+            return results
+
+        except Exception as e:
+            print(f"❌ Error in calculate_from_payload: {e}")
+            raise e
+
 
 def main():
     """Main function to run the carbon footprint calculator"""

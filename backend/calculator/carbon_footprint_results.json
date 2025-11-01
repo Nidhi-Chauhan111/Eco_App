@@ -1,33 +1,29 @@
 {
   "transportation": {
-    "weekly_kg_co2": 10.845,
-    "annual_kg_co2": 563.94,
+    "weekly_kg_co2": 4.1000000000000005,
+    "annual_kg_co2": 213.20000000000002,
     "inputs": {
-      "car": {
-        "type": "Car (Diesel)",
-        "km_per_week": 45.0
-      },
       "bus": {
-        "km_per_week": 45.0
+        "km_per_week": 100.0
       }
     }
   },
   "energy": {
-    "monthly_kg_co2": 61.052,
-    "annual_kg_co2": 732.624,
+    "weekly_kg_co2": 92.82,
+    "annual_kg_co2": 4826.639999999999,
     "inputs": {
       "electricity": {
-        "kwh_per_month": 50.0,
+        "kwh_per_month": 234.0,
         "grid_type": "Electricity (US Grid Average)"
       },
-      "natural_gas": {
-        "scf_per_month": 800.0
+      "lpg": {
+        "gallons_per_month": 56.0
       }
     }
   },
   "food": {
-    "weekly_kg_co2": 57.599999999999994,
-    "annual_kg_co2": 2995.2,
+    "weekly_kg_co2": 38.5,
+    "annual_kg_co2": 2002.0,
     "inputs": {
       "meat": {
         "beef": 0.0,
@@ -36,35 +32,40 @@
         "fish": 0.0
       },
       "dairy": {
-        "milk": 15.0,
-        "cheese": 0.0
+        "milk": 5.0,
+        "cheese": 1.0
       },
       "plants": {
-        "vegetables": 7.0,
-        "fruits": 4.0,
+        "vegetables": 9.0,
+        "fruits": 2.0,
         "grains": 1.0
       }
     }
   },
   "waste": {
-    "weekly_kg_co2": 3.582,
-    "annual_kg_co2": 186.26399999999998,
+    "weekly_kg_co2": 3.115,
+    "annual_kg_co2": 161.98000000000002,
     "inputs": {
       "levels": {
-        "plastic": "medium",
-        "paper": "low",
+        "plastic": "low",
+        "paper": "high",
         "glass": "low",
         "metal": "low",
-        "organic": "medium"
+        "organic": "high"
       },
       "recycling": {
-        "plastic": "yes",
+        "plastic": "no",
         "paper": "yes",
-        "glass": "yes",
+        "glass": "no",
         "metal": "yes"
       },
-      "compost": "no"
+      "compost": "yes"
     }
   },
-  "total_annual_kg_co2": 4478.028
+  "total_annual_kg_co2": 7203.82,
+  "summary": {
+    "total_weekly_kg_co2": 138.53,
+    "change_from_last_week_percent": -59.21,
+    "category_with_highest_emission": "energy"
+  }
 }

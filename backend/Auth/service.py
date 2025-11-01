@@ -25,3 +25,18 @@ def authenticate_user(db: Session, email: str, password: str):
 
     token = utils.create_access_token({"sub": user.email})
     return {"access_token": token, "token_type": "bearer"}
+
+# new function (used by calculator or other routes needing user verification)
+def verify_user_credentials(db: Session, email: str, password: str):
+    """
+    Verifies if a user exists and password is correct.
+    Returns the user object if valid, else None.
+    """
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if not user:
+        return None
+
+    if not utils.verify_password(password, user.password):
+        return None
+
+    return user
