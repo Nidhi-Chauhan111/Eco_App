@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./App.css";
-import carbonFootprint from "./carbon-footprint.jpg"; // your image
+import carbonFootprint from "./canopy.jpeg"; // your image
 
 function Page1() {
   const navigate = useNavigate();
