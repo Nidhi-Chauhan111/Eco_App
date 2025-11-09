@@ -8,6 +8,7 @@ import Login from "./login";
 import Journal from "./Journal"; // ✅ add this line
 import "./App.css";
 
+
 function App() {
   return (
     <Router>

@@ -1,46 +1,48 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Journal from "./Journal";
+import { useState } from "react";
 import "./App.css";
+import Sidebar from "./Sidebar";
+import Journal from "./pages/Journal"; // create this file
+function App() {
+  const [formData, setFormData] = useState({
+    transport: {},
+    energy: {},
+    food: {},
+    waste: {}
+  });
+  const [result, setResult] = useState(null);
+<Route path="/journal" element={<Journal />} />
+  const handleCalculate = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      setResult(data);
+    } catch (err) {
+      console.error("Error calculating footprint:", err);
+    }
+  };
 
-function Home() {
   return (
-    <div className="page">
-      <h1>🌍 Welcome to CANOPY</h1>
-      <p>Track your carbon footprint and write about your day in the Journal.</p>
+    <div className="calculator-container">
+      <div className="calculator-header">
+        <h1>🌍 Carbon Footprint Calculator</h1>
+      </div>
+      <button onClick={handleCalculate} className="calc-btn">
+        Calculate
+      </button>
+
+      {result && (
+        <div className="result-card">
+          <h2>Results</h2>
+          <p><b>Total Annual:</b> {result.total_annual.toFixed(2)} kg CO₂</p>
+          <pre>{JSON.stringify(result.recommendations, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }
 
-function Calculator() {
-  return <div className="page"><h2>🧮 Carbon Calculator</h2></div>;
-}
-
-function Suggestions() {
-  return <div className="page"><h2>💡 Eco Suggestions</h2></div>;
-}
-
-function App() {
-  return (
-    <Router>
-      <nav className="navbar">
-        <h2 className="logo">🌿 CANOPY</h2>
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/calculator">Calculator</Link></li>
-          <li><Link to="/suggestions">Suggestions</Link></li>
-          <li><Link to="/journal">Journal</Link></li>
-        </ul>
-      </nav>
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/calculator" element={<Calculator />} />
-        <Route path="/suggestions" element={<Suggestions />} />
-        <Route path="/journal" element={<Journal />} />
-      </Routes>
-    </Router>
-  );
-}
-
-export default App;
+export default App;  
