@@ -1,4 +1,700 @@
 /* 🌿 Global */
+/* ===== colorful paper cards + floating emoji ===== */
+/* ---------------------------
+   Calculator: paper-card theme
+   --------------------------- */
+/* ---------------------------
+   Enhanced card backgrounds + emoji motion
+   --------------------------- */
+.paper-card {
+  background: linear-gradient(180deg, rgba(250,251,247,0.98) 0%, rgba(242,247,241,0.95) 100%);
+  border: 1px solid rgba(170,140,100,0.09);
+  box-shadow: 0 18px 40px rgba(20,18,10,0.06);
+  border-radius: 14px;
+  padding: 24px 32px;
+  margin: 18px auto;
+  position: relative;
+  overflow: visible;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><circle cx='20' cy='20' r='1' fill='%23efe9db' /><circle cx='60' cy='60' r='1' fill='%23efe9db' /><circle cx='110' cy='40' r='1' fill='%23efe9db' /></svg>");
+  background-repeat: repeat;
+  background-size: 220px;
+}
+
+/* subtle tilt and lift */
+.paper-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 28px 60px rgba(20,18,10,0.08);
+}
+
+/* per-variant softer gradients */
+.variant-transport { background: linear-gradient(180deg, #f7fff9 0%, #ecfff0 100%); border-left: 6px solid rgba(17,140,60,0.12); }
+.variant-energy    { background: linear-gradient(180deg, #fffdf6 0%, #fff7ec 100%); border-left: 6px solid rgba(245,180,30,0.12); }
+.variant-food      { background: linear-gradient(180deg, #fff9fb 0%, #fff7f2 100%); border-left: 6px solid rgba(240,120,60,0.09); }
+.variant-waste     { background: linear-gradient(180deg, #f7fff8 0%, #eefcf5 100%); border-left: 6px solid rgba(50,130,80,0.10); }
+
+/* floating emoji (replaces leaf) */
+.floating-emoji {
+  position: absolute;
+  right: 22px;
+  top: -8px;
+  font-size: 28px;
+  opacity: 0.95;
+  transform-origin: center;
+  animation: floatSpinFall 5s ease-in-out infinite;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.06));
+}
+
+@keyframes floatSpinFall {
+  0% { transform: translateY(0) rotate(-10deg) scale(1); }
+  25% { transform: translateY(-10px) rotate(10deg) scale(1.1); }
+  50% { transform: translateY(0) rotate(20deg) scale(1.05); }
+  75% { transform: translateY(8px) rotate(-15deg) scale(0.95); }
+  100% { transform: translateY(0) rotate(-10deg) scale(1); }
+}
+
+
+/* slightly larger title & quote styling */
+.section-title { font-family: "Playfair Display", serif; color: #6b4e2e; font-size: 1.35rem; margin: 6px 0 4px; }
+.card-quote { font-style: italic; color: #6f6f6f; margin-bottom: 12px; }
+
+/* card badge nudged so it doesn't duplicate navbar */
+.card-badge {
+  position: absolute;
+  left: 26px;
+  top: -10px; /* was -22px before */
+  background: #fffdf8;
+  border: 1px solid rgba(180,150,100,0.12);
+  padding: 8px 14px;
+  border-radius: 999px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.04);
+  font-weight: 700;
+  color: #6b4e2e;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* a little animated decorative dot near bottom to add motion */
+.paper-card::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: 60px;
+  height: 8px;
+  background: linear-gradient(90deg, rgba(3,166,74,0.05), rgba(183,120,40,0.03));
+  transform: translateX(-50%);
+  border-radius: 8px;
+  filter: blur(6px);
+  opacity: 0.9;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0% { opacity: .7; transform: translateX(-50%) scaleX(0.95); }
+  50% { opacity: 1; transform: translateX(-50%) scaleX(1.05); }
+  100% { opacity: .7; transform: translateX(-50%) scaleX(0.95); }
+}
+
+/* ensure large numeric input texts display fully */
+.paper-input { white-space: nowrap; overflow: visible; text-overflow: clip; }
+
+/* responsive */
+@media (max-width: 820px) {
+  .card-badge { top: -14px; left: 12px; padding: 6px 10px; font-size: 0.95rem; }
+  .floating-emoji { font-size: 22px; top: -16px; right: 12px; }
+  .paper-card { padding: 18px; margin: 12px; }
+}
+
+.app-parchment {
+  padding-top: 110px; /* prevents overlap with fixed navbar */
+  padding-bottom: 40px;
+  background: linear-gradient(180deg, #f7f4ec 0%, #f3efe6 100%);
+}
+
+/* card shell (paper / parchment style like journal) */
+.paper-card {
+  background: linear-gradient(180deg, rgba(255,251,241,1), rgba(250,244,232,0.9));
+  border: 1px solid rgba(180,150,100,0.15);
+  box-shadow: 0 12px 30px rgba(30,20,10,0.06);
+  border-radius: 12px;
+  padding: 20px 26px;
+  margin: 16px auto;
+  position: relative;
+  overflow: visible;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+/* lift on hover */
+.paper-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(30,20,10,0.08);
+}
+
+/* small badge in top-left */
+.card-badge {
+  position: absolute;
+  left: 18px;
+  top: -18px;
+  background: #fffdf8;
+  border: 1px solid rgba(180,150,100,0.12);
+  padding: 8px 12px;
+  border-radius: 999px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.04);
+  font-weight: 700;
+  color: #6b4e2e;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* floating decorative leaf top-right */
+.floating-leaf {
+  position: absolute;
+  right: 14px;
+  top: -12px;
+  font-size: 20px;
+  opacity: 0.85;
+  transform: rotate(-10deg);
+  animation: floatLeafMini 6s ease-in-out infinite;
+}
+@keyframes floatLeafMini {
+  0% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-6px) rotate(2deg); }
+  100% { transform: translateY(0) rotate(-6deg); }
+}
+
+/* centered big title inside card */
+.section-title {
+  font-family: "Playfair Display", serif;
+  color: #6b4e2e;
+  font-size: 1.25rem;
+  margin: 6px 0 2px;
+}
+
+/* quote under title */
+.card-quote {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #6f6f6f;
+  margin-bottom: 12px;
+}
+
+/* emoji row at card bottom */
+.card-emoji-row {
+  margin-top: 14px;
+  font-size: 1.05rem;
+  opacity: 0.95;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* variant backgrounds (subtle color hints) */
+.variant-transport { border-left: 6px solid rgba(3,166,74,0.10); }
+.variant-energy    { border-left: 6px solid rgba(250,183,40,0.10); }
+.variant-food      { border-left: 6px solid rgba(245,130,49,0.08); }
+.variant-waste     { border-left: 6px solid rgba(83,142,78,0.07); }
+
+/* stage container */
+.calc-stage { display:flex; justify-content:center; align-items:flex-start; }
+
+/* form control rows - two columns: label + control */
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+.label {
+  flex: 0 0 36%;
+  min-width: 180px;
+  color: #5a3f2a;
+  font-weight: 600;
+}
+.control {
+  flex: 1 1 58%;
+  min-width: 180px;
+}
+
+/* paper-style selects & inputs */
+.paper-select,
+.paper-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(160,140,110,0.25);
+  background: #fffdf8;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  font-size: 0.98rem;
+  color: #2f2f2f;
+  outline: none;
+  transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.12s;
+}
+
+/* use text inputs for big numbers (so numbers don't get clipped) */
+.paper-input[type="text"] { 
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  letter-spacing: 0.3px;
+}
+
+/* select focus state */
+.paper-select:focus,
+.paper-input:focus {
+  border-color: rgba(3,166,74,0.6);
+  box-shadow: 0 6px 18px rgba(3,166,74,0.06);
+  transform: translateY(-1px);
+}
+
+/* friendly buttons used in the calculator footer */
+.warm-btn {
+  background: linear-gradient(90deg,#b5771a,#80520e);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 28px;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(133,90,36,0.16);
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.warm-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 38px rgba(133,90,36,0.18); }
+
+.warm-btn-ghost {
+  background: #fff;
+  border: 1px solid rgba(133,90,36,0.12);
+  padding: 10px 18px;
+  border-radius: 28px;
+  font-weight: 700;
+  color: #6b4e2e;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+}
+.warm-btn-ghost:hover { transform: translateY(-2px); }
+
+/* small stat cards in results */
+.stat-card {
+  background: linear-gradient(180deg,#fffefc,#fff9f0);
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid rgba(170,140,100,0.08);
+  text-align: center;
+}
+.muted-label { color: #6f6f6f; font-size: 0.9rem; }
+
+/* tiny layout helpers */
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1rem; }
+
+/* responsive adjustments */
+@media (max-width: 820px) {
+  .control-row { flex-direction: column; align-items: stretch; }
+  .label { flex-basis: 100%; min-width: 0; }
+  .control { flex-basis: 100%; }
+  .paper-card { padding: 18px; margin: 12px; }
+  .card-badge { left: 12px; top: -14px; padding: 6px 10px; }
+}
+
+/* optional: hide any duplicate navbar title (if navbar shows page-title) */
+/* .navbar .page-title { display: none !important; } */
+
+.paper-card {
+  background: linear-gradient(180deg, rgba(255,253,248,1) 0%, rgba(255,250,240,1) 100%);
+  border: 1px solid rgba(230,210,170,0.9);
+  border-radius: 14px;
+  padding: 22px;
+  position: relative;
+  overflow: visible;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* colorful variants */
+.paper-card.variant-transport { background: linear-gradient(180deg,#f3fff7,#ebf9f0); }
+.paper-card.variant-energy    { background: linear-gradient(180deg,#fffaf6,#fff3e7); }
+.paper-card.variant-food      { background: linear-gradient(180deg,#fff8fb,#fff2f8); }
+.paper-card.variant-waste     { background: linear-gradient(180deg,#fbfff7,#f1fff0); }
+
+/* floating emoji/leaf in top-left */
+.card-badge {
+  position: absolute;
+  left: 16px;
+  top: -18px;
+  background: rgba(255,255,255,0.85);
+  padding: 8px 12px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-brown);
+  font-weight: 700;
+}
+
+/* small animated leaf (floating) */
+.floating-leaf {
+  position: absolute;
+  right: 18px;
+  top: 10px;
+  font-size: 26px;
+  opacity: 0.95;
+  transform-origin: center;
+  animation: floatLeaf 6s ease-in-out infinite;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.06));
+}
+
+@keyframes floatLeaf {
+  0%   { transform: translateY(0) rotate(0deg) scale(1); }
+  50%  { transform: translateY(-10px) rotate(10deg) scale(1.05); }
+  100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+
+/* colorful small emoji row under the title */
+.card-emoji-row {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:8px;
+  margin-bottom:12px;
+  font-size:1.18rem;
+}
+
+/* slight hover lift for cards */
+.paper-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(10,10,10,0.08);
+}
+
+/* make the title not show in navbar: optional override if navbar uses .page-title */
+.navbar .page-title { display: none !important; } /* optionally remove if you control Navbar */
+
+
+.section-title {
+  font-family: "Playfair Display", "Lora", serif;
+  color: var(--accent-brown);
+  font-weight: 700;
+  font-size: 1.2rem;
+  text-align: center;          /* center title */
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
+}
+
+/* subtle thin divider below title, like journal cards */
+.section-title::after {
+  content: "";
+  display: block;
+  height: 1px;
+  width: 92%;
+  margin: 10px auto 0;
+  background: linear-gradient(90deg, transparent, #e6d7a7, transparent);
+  opacity: 0.9;
+}
+
+/* small inspirational quote under each card title */
+.card-quote {
+  text-align: center;
+  font-style: italic;
+  color: #7b623a;
+  font-size: 0.95rem;
+  margin: 8px 0 14px;
+  font-family: "Inter", sans-serif;
+}
+
+/* Responsive card center and safe top offset so card never overlaps navbar */
+.app-parchment {
+  padding-top: 110px; /* keep content below navbar */
+  padding-bottom: 60px;
+}
+
+/* stage wrapper centers the single card vertically on large screens */
+.calc-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 180px);
+}
+
+/* ensure card doesn't stretch too wide */
+.paper-card {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* make inputs very readable and allow long numbers to show */
+.paper-input {
+  background: transparent;
+  border: 1px solid #ebdfca;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--muted-brown);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  font-size: 1.05rem;
+  min-height: 44px;
+  width: 100%;              /* TAKE FULL WIDTH so large numbers are visible */
+  box-sizing: border-box;
+  text-align: left;         /* ensure number aligns left, not centered/truncated */
+  letter-spacing: 0.2px;
+}
+
+/* selects have slightly different background to feel like a pill */
+.paper-select {
+  background: linear-gradient(180deg,#fffaf4,#fff6eb);
+  border: 1px solid #e7d8bc;
+  padding: 10px 12px;
+  border-radius: 12px;
+  min-height: 44px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1.02rem;
+}
+
+/* larger font & bold for labels asking questions */
+.control-row .label {
+  color: #6b4e2e;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* keep rows neat and stacked; label left, input right */
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+/* control column will grow to take remaining space */
+.control-row .control {
+  flex: 1 1 320px;
+  max-width: 520px;
+}
+
+/* larger warm buttons */
+.warm-btn {
+  background: linear-gradient(180deg,var(--button-bg), #8f6118);
+  color: var(--button-text);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  border: none;
+  box-shadow: 0 14px 30px rgba(34,20,6,0.12);
+}
+.warm-btn-ghost {
+  background: transparent;
+  color: var(--accent-brown);
+  border: 1px solid var(--card-border);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* remove number spinners (already added before but keep to be safe) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* small responsive tweaks */
+@media (max-width: 900px) {
+  .calc-stage { min-height: auto; align-items: flex-start; padding-top: 30px; }
+  .control-row .label { min-width: 120px; font-size: 0.95rem; }
+  .paper-card { padding: 18px; margin: 8px; }
+}
+
+.app-parchment {
+  padding-top: 110px; /* pushes content below fixed navbar */
+  padding-bottom: 60px;
+}
+
+/* center the active step vertically inside the visible viewport */
+.calc-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 180px); /* leaves space for navbar and footer */
+}
+
+/* Make select controls match paper style and look like warm rounded buttons */
+.paper-input,
+.paper-select {
+  background: transparent;
+  border: 1px solid #ebdfca;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--muted-brown);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  font-size: 0.95rem;
+  min-height: 44px;
+}
+
+/* Provide a slightly different visual for selects to look like small pill buttons */
+.paper-select {
+  background: linear-gradient(180deg,#fffaf4,#fff6eb);
+  border: 1px solid #e7d8bc;
+}
+
+/* style the warm buttons used for Next/Back/Calculate to be consistent */
+.warm-btn {
+  background: linear-gradient(180deg,var(--button-bg), #8f6118);
+  color: var(--button-text);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 10px 20px rgba(34,20,6,0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.warm-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(34,20,6,0.12); }
+
+/* "ghost" variant for back/edit buttons */
+.warm-btn-ghost {
+  background: transparent;
+  color: var(--accent-brown);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+}
+
+/* Remove up/down arrows on number inputs (Chrome/Edge/IE/Firefox) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Improve width/spacing of label + control rows (stacked) */
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.control-row .label {
+  min-width: 160px;
+  color: #7a5f44;
+  font-size: 0.98rem;
+}
+.control-row .control {
+  flex: 1 1 220px;
+  max-width: 420px;
+}
+
+/* make dropdowns visually inline and neat on wide screens */
+@media (min-width: 1024px) {
+  .paper-card { padding: 22px 30px; }
+  .control-row .label { min-width: 180px; }
+}
+
+/* small responsive tweak for mobile */
+@media (max-width: 700px) {
+  .calc-stage { min-height: auto; padding-top: 20px; align-items: flex-start; }
+  .control-row { gap: 10px; }
+  .control-row .label { min-width: 120px; }
+}
+
+
+:root{
+  /* palette tuned to match the journal page */
+  --page-bg: #f2efe9;           /* parchment background */
+  --page-edge: #efe7d7;         /* inner column edge */
+  --card-bg: #fffaf4;           /* paper card */
+  --card-border: #e8d8ba;       /* soft border for cards */
+  --accent-brown: #7b4f2f;      /* headings */
+  --muted-brown: #987b63;       /* muted text */
+  --accent-green: #1f6b45;      /* green accent */
+  --button-bg: #b0812e;         /* warm button color */
+  --button-text: #fff8ef;
+  --shadow-soft: 0 8px 20px rgba(23,18,10,0.06);
+}
+
+/* parchment container that gives the two-column 'paper' feel */
+.app-parchment {
+  background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,250,0.95) 100%);
+  border-left: 18px solid var(--page-edge);
+  border-right: 18px solid var(--page-edge);
+  padding: 28px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-soft);
+}
+
+/* paper-like card */
+.paper-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 10px 18px rgba(12,8,4,0.04);
+}
+
+
+
+/* journal-style heading for section titles */
+.journal-heading {
+  font-family: 'Lora', serif;
+  color: var(--accent-brown);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* section title within cards */
+.section-title {
+  font-family: 'Lora', serif;
+  color: var(--accent-brown);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* small muted label */
+.muted-label {
+  color: #6e5846;
+  font-size: 0.95rem;
+}
+
+/* warm rounded button */
+.warm-btn {
+  background: linear-gradient(180deg,var(--button-bg), #8f6118);
+  color: var(--button-text);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 6px 12px rgba(137,93,24,0.14);
+}
+
+/* stat card */
+.stat-card {
+  background: linear-gradient(180deg,#fffefb,#fffaf2);
+  border: 1px solid var(--card-border);
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* inputs that look subtle/paper-like */
+.paper-input {
+  background: transparent;
+  border: 1px solid #ebdfca;
+  padding: 10px;
+  border-radius: 8px;
+  color: var(--muted-brown);
+}
+
+/* helper / small note */
+.helper-note { font-size: 0.85rem; color: #7a6653; }
+
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
@@ -1472,3 +2168,276 @@ body {
   box-shadow: 0 8px 25px rgba(0,0,0,0.35);
   transform: translateY(-2px);
 }
+/* ---------- RESULTS PANEL STYLING ---------- */
+.variant-results {
+  background: linear-gradient(180deg, #fffefb, #f7fff9);
+  border-left: 6px solid rgba(30,150,80,0.15);
+}
+
+.results-summary {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.result-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: #fffdf8;
+  border-radius: 12px;
+  border: 1px solid rgba(160,140,100,0.15);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+  transition: transform 0.2s ease;
+}
+.result-box:hover { transform: translateY(-4px) scale(1.03); }
+
+.result-emoji { font-size: 1.5rem; }
+.result-label { font-weight: 600; font-size: 0.9rem; color: #5a3f2a; }
+.result-value { color: #6b4e2e; font-weight: 700; }
+
+/* horizontal breakdown */
+.breakdown-horizontal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 18px;
+  gap: 14px;
+}
+
+.breakdown-item {
+  background: #fffefa;
+  border-radius: 14px;
+  padding: 12px 16px;
+  width: 190px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+  border: 1px solid rgba(160,140,100,0.1);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+.breakdown-item:hover {
+  transform: translateY(-5px) rotate(-1deg);
+  box-shadow: 0 18px 32px rgba(30,20,10,0.08);
+}
+
+.breakdown-emoji {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+}
+.breakdown-text {
+  color: #5b4532;
+  font-size: 0.9rem;
+}
+/* ---------------------------
+   Compact grid form + vibrant tiled card backgrounds
+   --------------------------- */
+
+/* make the fields inside a card flow in two columns on wide screens */
+.paper-card .fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 14px 30px;
+  align-items: start;
+  margin-top: 6px;
+}
+
+/* each field groups label + control stacked, keeps label readable on all sizes */
+.paper-card .field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* label style (keeps label compact but bold) */
+.paper-card .field .label {
+  font-size: 0.98rem;
+  color: #5a3f2a;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* controls: input/select style adjusted */
+.paper-card .field .control .paper-input,
+.paper-card .field .control .paper-select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.98rem;
+  border-radius: 10px;
+  border: 1px solid rgba(160,130,95,0.18);
+  background: rgba(255,255,255,0.96);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+  transition: box-shadow 0.18s, transform 0.12s;
+}
+
+/* prevent numeric inputs from clipping long numbers */
+.paper-card .field .control .paper-input[type="number"] {
+  min-width: 80px;
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: visible;
+}
+
+/* reduce spacing on mobile and use single column there */
+@media (max-width: 880px) {
+  .paper-card .fields-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Vibrant tiled backgrounds (journal-like) ---------- */
+/* subtle tiled linen/paper look using SVG data URL (small, fast) */
+.paper-card {
+  background-color: #fffdfa;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.85), rgba(250,250,248,0.95)),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><rect width='120' height='120' fill='%23fffaf2'/><g fill='%23efe6d8' opacity='0.12'><rect x='0' y='0' width='60' height='60'/><rect x='60' y='60' width='60' height='60'/></g></svg>");
+  background-repeat: repeat;
+  background-size: 220px;
+  border-radius: 14px;
+  padding: 24px 28px;
+}
+
+/* stronger variant palettes — select the one you like */
+.variant-transport { background-image:
+  linear-gradient(180deg, rgba(239,255,250,0.95), rgba(229,252,240,0.95)),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><rect width='160' height='160' fill='%23f7fff8'/><g fill='%230ee07f' opacity='0.03'><circle cx='30' cy='30' r='18'/><circle cx='100' cy='100' r='18'/></g></svg>"); }
+
+.variant-energy { background-image:
+  linear-gradient(180deg, rgba(255,251,240,0.96), rgba(255,244,232,0.96)),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><rect width='160' height='160' fill='%23fffaf5'/><g fill='%23ffcc66' opacity='0.03'><rect x='18' y='18' width='28' height='28' rx='6'/><rect x='90' y='90' width='28' height='28' rx='6'/></g></svg>"); }
+
+.variant-food { background-image:
+  linear-gradient(180deg, rgba(255,249,251,0.96), rgba(255,243,246,0.96)),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><rect width='160' height='160' fill='%23fff7f9'/><g fill='%23ff9fb0' opacity='0.03'><circle cx='40' cy='40' r='12'/><circle cx='120' cy='120' r='12'/></g></svg>"); }
+
+.variant-waste { background-image:
+  linear-gradient(180deg, rgba(245,255,250,0.96), rgba(238,255,244,0.96)),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><rect width='160' height='160' fill='%23f7fffd'/><g fill='%2366bb6a' opacity='0.035'><rect x='30' y='30' width='20' height='20' rx='4'/><rect x='100' y='100' width='20' height='20' rx='4'/></g></svg>"); }
+
+/* tweak badge to sit comfortably inside the card (not touching navbar) */
+.card-badge { top: -12px; left: 22px; padding: 8px 12px; }
+
+/* optional: slightly reduce main title size inside card for multi-row cards */
+.paper-card .section-title { font-size: 1.15rem; }
+
+/* small improvement for input spacing (prevent overlap) */
+.control-row, .paper-card .field { margin-bottom: 0; }
+
+/* keep the emoji row spaced from bottom for two-column grid */
+.paper-card .card-emoji-row { margin-top: 18px; }
+
+/* subtle hover highlight that varies by variant (adds warm glow) */
+.variant-transport:hover { box-shadow: 0 28px 70px rgba(10,160,80,0.06); transform: translateY(-6px); }
+.variant-energy:hover    { box-shadow: 0 28px 70px rgba(240,150,30,0.06); transform: translateY(-6px); }
+.variant-food:hover      { box-shadow: 0 28px 70px rgba(240,80,120,0.05); transform: translateY(-6px); }
+.variant-waste:hover     { box-shadow: 0 28px 70px rgba(30,130,70,0.06); transform: translateY(-6px); }
+
+/* ---------- Unified textured journal background for all section cards ---------- */
+/* Paste this at the very end of App.css (after all other rules) */
+
+.paper-card {
+  background-color: #fffaf5;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,250,0.95), rgba(250,248,243,0.96)),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23fffaf5'/><g fill='%23e9e0cf' opacity='0.06'><path d='M0 10c20-6 40 6 60 4s40-12 60-8 40 18 60 14v180H0z'/></g></svg>");
+  background-repeat: repeat;
+  background-size: 240px;
+  border: 1px solid rgba(160,130,95,0.10);
+  box-shadow: 0 18px 42px rgba(24,20,12,0.06);
+  border-radius: 14px;
+  padding: 24px 30px;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  color: #423226;
+}
+
+.paper-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 70px rgba(20,18,10,0.08);
+}
+
+/* keep per-variant tint but very subtle (same textured background) */
+.variant-transport { background-color: rgba(240,255,248,0.9); }
+.variant-energy    { background-color: rgba(255,251,240,0.95); }
+.variant-food      { background-color: rgba(255,249,252,0.95); }
+.variant-waste     { background-color: rgba(247,255,250,0.95); }
+
+.variant-transport,
+.variant-energy,
+.variant-food,
+.variant-waste {
+  background-blend-mode: normal;
+}
+
+.card-badge {
+  left: 22px;
+  top: -12px;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(160,140,110,0.12);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.04);
+}
+
+.floating-emoji {
+  top: -6px;
+  right: 18px;
+  font-size: 26px;
+}
+
+.paper-card .label,
+.paper-card .section-title,
+.paper-card .card-quote {
+  color: #4b3628;
+}
+
+/* mobile tweaks */
+@media (max-width: 880px) {
+  .paper-card { padding: 18px; background-size: 180px; }
+  .card-badge { left: 14px; top: -10px; padding: 6px 10px; }
+  .floating-emoji { font-size: 20px; top: -4px; right: 12px; }
+}
+/* === FORCE: unified textured background for all section cards ===
+   Paste this at the VERY END of App.css (last lines). */
+.app-parchment .paper-card,
+.app-parchment .section-card,
+.app-parchment .calc-card,
+.app-parchment .card,
+.app-parchment .paper-card.variant-transport,
+.app-parchment .paper-card.variant-energy,
+.app-parchment .paper-card.variant-food,
+.app-parchment .paper-card.variant-waste {
+  background-color: #fffaf5 !important;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,250,0.96), rgba(250,248,243,0.97)) !important,
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23fffaf5'/><g fill='%23e9e0cf' opacity='0.08'><path d='M0 10c20-6 40 6 60 4s40-12 60-8 40 18 60 14v180H0z'/></g></svg>") !important;
+  background-repeat: repeat !important;
+  background-size: 220px !important;
+  border: 1px solid rgba(160,130,95,0.10) !important;
+  box-shadow: 0 18px 42px rgba(24,20,12,0.06) !important;
+  color: #423226 !important;
+}
+
+/* keep very subtle tints but same paper texture */
+.app-parchment .variant-transport { background-color: rgba(240,255,248,0.94) !important; }
+.app-parchment .variant-energy    { background-color: rgba(255,251,240,0.96) !important; }
+.app-parchment .variant-food      { background-color: rgba(255,249,252,0.96) !important; }
+.app-parchment .variant-waste     { background-color: rgba(247,255,250,0.96) !important; }
+
+/* card badge safe placement */
+.app-parchment .card-badge { left: 22px !important; top: -12px !important; z-index: 3; }
+
+/* emoji placement */
+.app-parchment .floating-emoji { top: -6px !important; right: 18px !important; font-size: 26px !important; }
+
+/* mobile fallback */
+@media (max-width: 880px) {
+  .app-parchment .paper-card,
+  .app-parchment .section-card,
+  .app-parchment .calc-card { background-size: 180px !important; padding: 18px !important; }
+  .app-parchment .card-badge { left: 14px !important; top: -10px !important; padding: 6px 10px !important; }
+  .app-parchment .floating-emoji { font-size: 20px !important; top: -4px !important; right: 12px !important; }
+}
+
+
