@@ -1,6 +1,7 @@
+// Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./App.css";
+import "./App.css"; // Change this to any style file (LoginGlass.css, etc.)
 
 function Login() {
   const [isSignup, setIsSignup] = useState(false);
@@ -9,19 +10,13 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // 🔹 SIGNUP HANDLER
   const handleSignup = async (event) => {
     event.preventDefault();
-
     try {
       const response = await fetch("http://127.0.0.1:8000/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: fullName,
-          email: email,
-          password: password,
-        }),
+        body: JSON.stringify({ username: fullName, email, password }),
       });
 
       if (!response.ok) {
@@ -32,30 +27,23 @@ function Login() {
 
       const data = await response.json();
       alert(`Signup successful! Welcome, ${data.user}`);
-      setIsSignup(false); // switch to login form
-
-      // reset form fields
+      setIsSignup(false);
       setFullName("");
       setEmail("");
       setPassword("");
     } catch (error) {
       console.error("Signup Error:", error);
-      alert("Signup failed. Please check your backend connection.");
+      alert("Signup failed. Please check backend connection.");
     }
   };
 
-  // 🔹 LOGIN HANDLER
   const handleLogin = async (event) => {
     event.preventDefault();
-
     try {
       const response = await fetch("http://127.0.0.1:8000/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
@@ -67,22 +55,17 @@ function Login() {
       const data = await response.json();
       alert("Login successful!");
       localStorage.setItem("token", data.access_token);
-
-      // reset fields
-      setEmail("");
-      setPassword("");
-      navigate("/dashboard"); // redirect after login
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login Error:", error);
-      alert("Login failed. Please check your backend connection.");
+      alert("Login failed. Please check backend connection.");
     }
   };
 
   return (
     <div className="auth-container">
-      <div className="auth-card slide-in">
+      <div className="auth-card">
         <h2>{isSignup ? "Create Account" : "Welcome Back"}</h2>
-
         <form
           className="auth-form"
           onSubmit={isSignup ? handleSignup : handleLogin}

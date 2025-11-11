@@ -1015,168 +1015,237 @@ body {
 }
 
 /* 🌟 Creative Home Page */
-.home-section {
+/* 🌿 RESET */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+/* 🌍 Full-page container */
+.page1-container {
   position: relative;
-  height: 90vh;
-  background: linear-gradient(-45deg, #dfffe0, #c4f6cc, #b6f0be, #d4ffde);
-  background-size: 400% 400%;
-  animation: bgMove 10s ease infinite;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7f9f4 0%, #eef6ea 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  padding: 2rem;
+  padding-top: 60px; /* keeps it below navbar */
 }
 
-@keyframes bgMove {
+/* 🍃 Floating Emojis */
+.floating-emoji {
+  position: absolute;
+  font-size: 1.8rem;
+  opacity: 0.7;
+  animation: float 8s infinite ease-in-out alternate;
+}
+
+/* 🌱 Random emoji positions */
+
+.emoji-1 { top: 15%; right: 12%; animation-delay: 1s; }
+.emoji-2 { top: 70%; left: 20%; animation-delay: 2s; }
+.emoji-3 { top: 50%; right: 8%; animation-delay: 3s; }
+.emoji-4 { top: 80%; left: 70%; animation-delay: 4s; }
+.emoji-5 { top: 30%; left: 60%; animation-delay: 5s; }
+.emoji-6 { top: 6%; right: 40%; animation-delay: 6s; }
+.emoji-7 { top: 30%; left: 50%; animation-delay: 7s; }
+.emoji-8 { top: 20%; left: 25%; animation-delay: 2.5s; }
+
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.8;
+  }
+}
+
+/* 🌼 Main content layout */
+.page1-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 85%;
+  max-width: 1100px;
+  gap: 2rem;
+  z-index: 1;
+}
+
+/* 🪴 Text area */
+.text-content {
+  flex: 1;
+}
+
+h1 {
+  font-size: 3rem;
+  color: #2b4d2b;
+  margin-bottom: 0.5rem;
+}
+
+.highlight {
+  color: #3a693a;
+}
+
+.tagline {
+  font-size: 1.1rem;
+  color: #4b624b;
+  margin-top: 0.3rem;
+}
+
+.desc {
+  font-size: 1rem;
+  color: #3c4b3c;
+  margin: 1.2rem 0;
+  max-width: 600px;
+}
+
+/* 🌱 Glowing Button */
+.journey-btn {
+  background: linear-gradient(to right, #96c93d, #00b09b);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 176, 155, 0.3);
+}
+
+
+/* 🌳 Logo styling */
+.logo-container img {
+  width: 280px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* 🌺 Responsive */
+@media (max-width: 900px) {
+  .page1-content {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+
+  .logo-container img {
+    width: 220px;
+  }
+
+  h1 {
+    font-size: 2.3rem;
+  }
+
+  .desc {
+    font-size: 0.95rem;
+  }
+}
+/* 🌿 Aesthetic UI Design */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #dfe9f3 0%, #ffffff 100%);
+  color: #333;
+  overflow-x: hidden;
+}
+
+/* Page layout */
+.page-container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(120deg, #e8f0ff, #f8efff, #fff7e6);
+  background-size: 400% 400%;
+  animation: gradientFlow 12s ease infinite;
+}
+
+/* Animated gradient effect */
+@keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Floating eco icons */
-.floating-icons span {
-  position: absolute;
-  font-size: 2rem;
-  opacity: 0.15;
-  animation: float 8s ease-in-out infinite;
+/* Card content */
+.content {
+  text-align: center;
+  padding: 3rem 4rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s ease;
 }
 
-.floating-icons span:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
-.floating-icons span:nth-child(2) { top: 25%; right: 10%; animation-delay: 2s; }
-.floating-icons span:nth-child(3) { bottom: 20%; left: 15%; animation-delay: 4s; }
-.floating-icons span:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 6s; }
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+.content:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
 }
 
-/* Home layout */
-.home-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1100px;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-.home-text {
-  flex: 1;
-  min-width: 300px;
-  text-align: left;
-  padding: 1rem;
-}
-
-.home-title {
+/* Typography */
+.title {
   font-size: 2.5rem;
-  color: #034d1f;
-  margin-bottom: 1rem;
-  animation: fadeInUp 1s ease both;
-}
-
-.home-title span {
-  color: #03a64a;
-}
-
-.home-desc {
-  font-size: 1.1rem;
-  color: #034d1fbb;
-  margin-bottom: 2rem;
-  max-width: 500px;
-}
-
-.cta-btn {
-  background: linear-gradient(to right, #03a64a, #05b357);
-  color: white;
-  border: none;
-  padding: 0.9rem 1.8rem;
-  border-radius: 30px;
-  cursor: pointer;
   font-weight: 600;
+  background: linear-gradient(to right, #7b68ee, #ff6ec4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 1rem 0 2rem 0;
+  font-weight: 400;
+}
+
+/* Buttons */
+.primary-btn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(to right, #7b68ee, #ff6ec4);
+  color: white;
   font-size: 1rem;
-  box-shadow: 0 5px 15px rgba(0, 128, 0, 0.25);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
 }
 
-.cta-btn:hover {
-  background: linear-gradient(to right, #02893f, #03a64a);
-  box-shadow: 0 8px 25px rgba(0, 128, 0, 0.3);
+.primary-btn:hover {
   transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(123, 104, 238, 0.5);
 }
 
-/* Glow Shine Effect */
-.cta-btn::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 200%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0) 30%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  transition: 0.5s;
-}
-
-.cta-btn:hover::after {
-  left: 100%;
-}
-
-/* Floating Image Animation */
-.home-image img {
-  width: 300px;
-  max-width: 80%;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 128, 0, 0.25);
-  animation: floatImage 4s ease-in-out infinite;
-}
-
-@keyframes floatImage {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .home-content {
-    flex-direction: column-reverse;
-    text-align: center;
+/* Make responsive */
+@media (max-width: 768px) {
+  .content {
+    padding: 2rem;
   }
-  .home-text {
-    text-align: center;
-  }
-  .home-image img {
-    width: 250px;
-    margin-bottom: 1.5rem;
+  .title {
+    font-size: 2rem;
   }
 }
 
-// for theme 
-/* 🌿 Base Styles */
-body {
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-  transition: background 0.5s, color 0.5s;
-}
 
-/* 🌞 Light Theme */
-body[data-theme="light"] {
-  background: linear-gradient(to bottom right, #d1f7d6, #b3e5be);
-  color: #1c1c1c;
-}
-
-/* 🌙 Dark Theme */
-body[data-theme="dark"] {
-  background: linear-gradient(to bottom right, #1b1b1b, #333);
-  color: #e8f5e9;
-}
 
 /* 🧭 Navbar */
 .navbar {
@@ -1265,370 +1334,11 @@ body[data-theme="dark"] .card {
 .card:hover {
   transform: translateY(-5px);
 }
- // for login page
- /* 🌿 Stylish Login / Signup Page */
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #d8fcd6, #bdf8c9, #a6f3be);
-  overflow: hidden;
-  position: relative;
-}
+ 
+ /* 🌿 Stylish Login / Signup Page */ 
 
-/* Animated eco shapes in background */
-.auth-container::before,
-.auth-container::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(3, 166, 74, 0.15);
-  animation: floatCircles 10s infinite ease-in-out;
-}
 
-.auth-container::before {
-  width: 350px;
-  height: 350px;
-  top: -100px;
-  left: -100px;
-}
 
-.auth-container::after {
-  width: 300px;
-  height: 300px;
-  bottom: -120px;
-  right: -100px;
-  animation-delay: 2s;
-}
-
-@keyframes floatCircles {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
-
-/* Login card */
-.auth-card {
-  position: relative;
-  background: white;
-  border-radius: 25px;
-  box-shadow: 0 10px 40px rgba(0, 128, 0, 0.25);
-  padding: 3rem 2.5rem;
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  animation: slideFade 1s ease-in-out;
-  z-index: 2;
-}
-
-@keyframes slideFade {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-/* Title with green underline */
-.auth-title {
-  color: #034d1f;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  font-size: 1.8rem;
-  position: relative;
-  display: inline-block;
-}
-
-.auth-title::after {
-  content: "";
-  display: block;
-  height: 3px;
-  width: 60%;
-  background: #03a64a;
-  margin: 0.5rem auto 0;
-  border-radius: 2px;
-}
-
-/* Input fields */
-.auth-form input {
-  display: block;
-  width: 100%;
-  margin: 1rem 0;
-  padding: 0.9rem;
-  border-radius: 12px;
-  border: 1.5px solid #c8f2d3;
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.3s;
-  background: #f7fdf9;
-}
-
-.auth-form input:focus {
-  border-color: #03a64a;
-  box-shadow: 0 0 10px rgba(3, 166, 74, 0.2);
-  background: white;
-}
-
-/* Login button */
-.auth-btn {
-  width: 100%;
-  background: linear-gradient(90deg, #03a64a, #04b755);
-  color: white;
-  border: none;
-  padding: 0.9rem;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  margin-top: 1rem;
-  transition: all 0.3s ease-in-out;
-}
-
-.auth-btn:hover {
-  background: linear-gradient(90deg, #028a3f, #03a64a);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(3, 166, 74, 0.3);
-}
-
-/* Toggle & back links */
-.toggle-text {
-  margin-top: 1rem;
-  color: #333;
-}
-
-.toggle-text span {
-  color: #03a64a;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.toggle-text span:hover {
-  text-decoration: underline;
-}
-
-.back-btn {
-  margin-top: 1rem;
-  background: none;
-  border: none;
-  color: #03a64a;
-  cursor: pointer;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  transition: color 0.3s;
-}
-
-.back-btn:hover {
-  color: #028a3f;
-}
-
-/* Add a floating eco icon */
-.auth-card::before {
-  content: "🌿";
-  position: absolute;
-  font-size: 2rem;
-  top: -20px;
-  right: 25px;
-  animation: spinLeaf 5s infinite linear;
-}
-
-@keyframes spinLeaf {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-  
-// for home page
-/* 🌿 EcoTrack - Abstract Home Page Styling */
-
-body, html {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  font-family: "Poppins", sans-serif;
-  background: #c8f8da;
-}
-
-/* ============ HERO SECTION ============ */
-.hero-section {
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(120deg, #baf3ce, #d9ffe8, #a5edc5);
-  background-size: 400% 400%;
-  position: relative;
-  overflow: hidden;
-  animation: gradientShift 10s ease infinite;
-}
-
-/* ============ FLOATING ABSTRACTS ============ */
-.floating-elements .orb {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 255, 128, 0.25), transparent 70%);
-  filter: blur(90px);
-  opacity: 0.6;
-  animation: floatOrb 12s ease-in-out infinite alternate;
-}
-.orb1 {
-  top: -80px;
-  left: -100px;
-  width: 450px;
-  height: 450px;
-}
-.orb2 {
-  bottom: -100px;
-  right: -80px;
-  width: 400px;
-  height: 400px;
-  animation-delay: 3s;
-}
-.orb3 {
-  top: 40%;
-  left: 70%;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(25, 230, 105, 0.3), transparent 70%);
-  animation-delay: 2s;
-}
-
-/* Floating leaves 🌿 */
-.leaf {
-  position: absolute;
-  font-size: 1.8rem;
-  opacity: 0.7;
-  animation: floatLeaf 10s linear infinite;
-}
-.leaf1 {
-  top: 10%;
-  left: 20%;
-  animation-delay: 0s;
-}
-.leaf2 {
-  top: 50%;
-  right: 15%;
-  animation-delay: 3s;
-}
-.leaf3 {
-  bottom: 15%;
-  left: 40%;
-  animation-delay: 6s;
-}
-
-/* ============ CONTENT ============ */
-.hero-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 85%;
-  max-width: 1200px;
-  position: relative;
-  z-index: 2;
-  gap: 3rem;
-  flex-wrap: wrap;
-  animation: fadeIn 1.5s ease;
-}
-
-.text-container {
-  flex: 1;
-  min-width: 300px;
-  color: #064e2a;
-}
-.text-container h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #043d23;
-}
-.text-container h1 span {
-  color: #0bbf60;
-  text-shadow: 0 0 10px rgba(11, 191, 96, 0.3);
-}
-.text-container p {
-  font-size: 1.1rem;
-  color: #0c5837;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-  max-width: 480px;
-}
-
-/* Call to Action Button */
-.cta-btn {
-  background: linear-gradient(90deg, #10c86d, #0da45b, #26e481);
-  background-size: 300%;
-  color: #fff;
-  border: none;
-  padding: 0.9rem 2rem;
-  border-radius: 40px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(16, 200, 109, 0.3);
-  transition: all 0.4s ease;
-  animation: gradientFlow 5s linear infinite;
-}
-.cta-btn:hover {
-  transform: scale(1.05) translateY(-3px);
-  box-shadow: 0 10px 30px rgba(14, 167, 79, 0.45);
-}
-
-/* ============ IMAGE ============ */
-.image-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-.floating-image {
-  width: 350px;
-  border-radius: 20px;
-  box-shadow: 0 10px 35px rgba(15, 180, 90, 0.3);
-  animation: floatImage 4s ease-in-out infinite alternate;
-}
-
-/* ============ ANIMATIONS ============ */
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-@keyframes floatOrb {
-  from { transform: translate(0, 0); }
-  to { transform: translate(80px, -60px); }
-}
-@keyframes floatImage {
-  from { transform: translateY(0); }
-  to { transform: translateY(-20px); }
-}
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes floatLeaf {
-  0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
-  50% { opacity: 1; }
-  100% { transform: translateY(100px) rotate(360deg); opacity: 0; }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .hero-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  .text-container h1 {
-    font-size: 2.2rem;
-  }
-  .floating-image {
-    width: 70%;
-    margin-top: 2rem;
-  }
-}
-
-// for journal
 /* 🌿 JOURNAL PAGE */
 /* 🌿 JOURNAL PAGE */
 .journal-page {

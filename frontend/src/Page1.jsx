@@ -1,57 +1,46 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import "./App.css";
-import carbonFootprint from "./canopy.jpeg"; // your image
+import logo from "./canopy.jpeg"; // ✅ correct logo path
 
-function Page1() {
+const Page1 = () => {
   const navigate = useNavigate();
+  const emojis = [ "🌻", "🍃", "🌱", "🌼", "🍂", "🌎"];
 
   return (
-    <div className="home-section">
-      {/* Floating eco icons */}
-      <div className="floating-icons">
-        <span>🌿</span>
-        <span>🌎</span>
-        <span>🌞</span>
-        <span>💧</span>
-      </div>
+    <div className="page1-container">
+      {/* 🌸 Floating Emojis */}
+      {emojis.map((emoji, index) => (
+        <span key={index} className={`floating-emoji emoji-${index}`}>
+          {emoji}
+        </span>
+      ))}
 
-      <motion.div
-        className="home-content"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <div className="home-text">
-          <h1 className="home-title">
-            Track Your <span>Carbon Footprint</span>
+      {/* 🌿 Main Content */}
+      <div className="page1-content">
+        <div className="text-content">
+          <h1>
+            🌸 Welcome to <span className="highlight">CAnoPY</span>
           </h1>
-          <p className="home-desc">
-            Understand the impact of your lifestyle choices and take small steps
-            toward a sustainable future. Together, we can make a greener planet.
+          <p className="tagline">
+            <em>Reflect. Act. Grow Greener Every Day.</em>
           </p>
-          <motion.button
-            className="cta-btn"
-            onClick={() => navigate("/login")}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            🌱 Login or Sign Up
-          </motion.button>
+          <p className="desc">
+            Track your <b>carbon footprint</b> and embrace a sustainable
+            lifestyle. Let’s nurture our planet together — one small choice at a
+            time. 🌎
+          </p>
+          <button className="journey-btn" onClick={() => navigate("/login")}>
+            🌱 Begin Your Journey
+          </button>
         </div>
 
-        <motion.div
-          className="home-image"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-        >
-          <img src={carbonFootprint} alt="Carbon Footprint" />
-        </motion.div>
-      </motion.div>
+        <div className="logo-container">
+          <img src={logo} alt="CANoPY Logo" />
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default Page1;
