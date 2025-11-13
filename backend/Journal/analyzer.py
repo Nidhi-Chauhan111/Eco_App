@@ -7,7 +7,7 @@ from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 from transformers import pipeline
 import numpy as np
-from config import Config
+from backend.Journal.config import Config
 
 logging.basicConfig(level=getattr(logging, Config.LOG_LEVEL))
 logger = logging.getLogger(__name__)
@@ -29,12 +29,12 @@ class EcoJournalAnalyzer:
             self.emotion_classifier = pipeline(
                 "text-classification",
                 model=Config.EMOTION_MODEL,
-                return_all_scores=True
+                top_k=None  # return all scores (replacement for return_all_scores=True)
             )
             logger.info("✅ Model loaded successfully")
         except Exception as e:
             logger.error(f"❌ Failed to load model: {e}")
-            raise
+            self.emotion_classifier = None  # indicates fallback mode
     
     def analyze_journal_entry(self, text: str) -> Dict[str, Any]:
         """

@@ -2,13 +2,14 @@
 
 # backend/Auth/routes.py
 # backend/Auth/routes.py
-from config import Settings
+from auth_config import Settings
 from fastapi_jwt_auth import AuthJWT
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Database.Journal import Base, SessionLocal
-from Database.Journal import get_db
+from Database.db import get_db
+#from Database.Journal import get_db
 from backend.Auth import service
 from backend.Auth.schemas import UserCreate, UserLogin  # ✅ import from schemas.py
 

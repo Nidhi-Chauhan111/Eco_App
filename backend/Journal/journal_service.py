@@ -4,15 +4,17 @@
 import logging
 from datetime import datetime, date
 from typing import Dict, List, Optional, Any
-from config import Config
-from analyzer import EcoJournalAnalyzer, InspirationGenerator
-from streak_manager import StreakManager
+from backend.Journal.config import Config
+from Database.Journal import get_journal_repository   ######10nov
+
+from backend.Journal.analyzer import EcoJournalAnalyzer, InspirationGenerator
+from backend.Journal.streak_manager import StreakManager
 
 # Import database repositories
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../Database'))
-from Journal import get_journal_repository
+
 
 logging.basicConfig(level=getattr(logging, Config.LOG_LEVEL))
 logger = logging.getLogger(__name__)

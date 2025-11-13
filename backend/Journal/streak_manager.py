@@ -4,13 +4,15 @@
 import logging
 from datetime import datetime, date, timedelta
 from typing import Dict, List, Optional, Tuple
-from config import Config
+from backend.Journal.config import Config
+#from Database import Journal
+
 
 # Import database models and repositories
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../Database'))
-from Journal import (
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from Database.Journal import (
     get_user_repository, get_streak_event_repository, 
     get_achievement_repository, ACHIEVEMENTS
 )

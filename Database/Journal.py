@@ -1,17 +1,25 @@
 # Database/Journal.py
 # Database models and connections for Eco-Journal
+print(">>> Loading Database/Journal.py")
 
-import importlib
-import os
+#import importlib
+import os,sys
+print(f">>> Debug: importing file {os.path.abspath(__file__)} as module __name__={__name__}")
+matching = [n for n in sys.modules if n.lower().endswith('database.journal') or 'journal' in n.lower()]
+print(">>> sys.modules matching 'journal':", matching)
 from datetime import datetime, date
 from typing import Optional, List, Dict, Any
 import uuid
-from Database.db import Base, engine  # Import shared Base & engine
+# Import shared Base & engine
+from Database.db import Base, engine, SessionLocal, get_db
+from backend.Auth.models import User
+
 
 # PostgreSQL imports
 from sqlalchemy import create_engine, Column, String, Integer, Float, Boolean, DateTime, Date, Text, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -26,9 +34,9 @@ load_dotenv()
 
 # PostgreSQL Configuration
 POSTGRES_URL = os.getenv("POSTGRES_URL") #make changes after installation
-engine = create_engine(POSTGRES_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+#engine = create_engine(POSTGRES_URL)
+#SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+#Base = declarative_base()
 
 # MongoDB Configuration
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/")
@@ -39,9 +47,10 @@ journal_collection = mongo_db.journal_entries
 class UserStats(Base):
     """PostgreSQL UserStats model for streak tracking"""
     __tablename__ = "user_stats"
+    __table_args__ = {'extend_existing': True}
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, nullable=False) 
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     username = Column(String(50), unique=True, nullable=False)
     current_streak = Column(Integer, default=0)
     longest_streak = Column(Integer, default=0)
@@ -53,12 +62,16 @@ class UserStats(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+     # Relationship
+    user = relationship("User", back_populates="stats")
+
 class StreakEvent(Base):
     """PostgreSQL model for tracking streak events"""
     __tablename__ = "streak_events"
+    __table_args__ = {'extend_existing': True}
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     event_type = Column(String(50), nullable=False)  # 'continued', 'broken', 'frozen', 'milestone'
     streak_count = Column(Integer, nullable=False)
     previous_streak = Column(Integer, default=0)
@@ -66,18 +79,23 @@ class StreakEvent(Base):
     meta_info = Column("metadata", JSON, nullable=True)  # ✅ safe name in Python, DB column still "metadata"
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    user = relationship("User", back_populates="streak_events")
+
 class Achievement(Base):
     """PostgreSQL model for user achievements"""
     __tablename__ = "achievements"
+    __table_args__ = {'extend_existing': True}
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(String, nullable=False)# foreign key link to Auth.User.id
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     achievement_type = Column(String(50), nullable=False)
     achievement_name = Column(String(100), nullable=False)
     description = Column(Text, nullable=True)
     badge_emoji = Column(String(10), nullable=True)
     earned_at = Column(DateTime, default=datetime.utcnow)
     streak_count_when_earned = Column(Integer, nullable=True)
+
+    user = relationship("User", back_populates="achievements")
 
 
 class DatabaseManager:
@@ -88,25 +106,17 @@ class DatabaseManager:
         self.mongo_collection = journal_collection
         self.setup_postgres()
         self.setup_mongodb()
-
+        
     
     
     def setup_postgres(self):
         """Initialize PostgreSQL connection and create tables"""
         try:
-
-            
-            # Dynamically import other modules that define models so SQLAlchemy knows them.
-        # Use full package path that matches your project (adjust if needed).
-            try:
-                importlib.import_module("backend.Auth.models")
-                print("✅ Imported backend.Auth.models")
-            except Exception as e:
-            # show a helpful message but continue — if import fails, create_all won't include those models
-                print(f"⚠️ Could not import backend.Auth.models: {e}")
-            
             from Database.db import Base, engine, SessionLocal
+
+            print(">>> Creating tables, current models:", Base.metadata.tables.keys())
             Base.metadata.create_all(bind=engine)
+
             self.postgres_session = SessionLocal()
             print("✅ PostgreSQL connection established")
         except Exception as e:
@@ -140,6 +150,11 @@ class DatabaseManager:
         if self.postgres_session:
             self.postgres_session.close()
         mongo_client.close()
+    
+
+# Initialize database manager
+#db_manager = DatabaseManager()
+
 
 class UserRepository:
     """Repository for UserStats operations"""
@@ -348,33 +363,62 @@ class AchievementRepository:
         
         return new_achievements
 
-# Initialize database manager
-
-# Import User model so SQLAlchemy knows about it
-from backend.Auth.models import User
-
-# Create all tables in the database
-Base.metadata.create_all(bind=engine)
-db_manager = DatabaseManager()
-
 # Factory functions for repositories
-def get_user_repository() -> UserRepository:
-    return UserRepository(db_manager.get_postgres_session())
+#def get_user_repository() -> UserRepository:
+    #return UserRepository(db_manager.get_postgres_session()) #earlier code when db_manager was called
+def get_user_repository(db_session: Session | None = None) -> UserRepository:
+    """Return a UserRepository. If db_session is None, make a new SessionLocal()."""
+    close_after = False
+    if db_session is None:
+        db_session = SessionLocal()
+        close_after = True
+    repo = UserRepository(db_session)
+    # attach a flag so callers know whether to close the session
+    setattr(repo, "_close_session_on_finish", close_after)
+    return repo
 
-def get_streak_event_repository() -> StreakEventRepository:
-    return StreakEventRepository(db_manager.get_postgres_session())
 
+#def get_streak_event_repository() -> StreakEventRepository:
+    #return StreakEventRepository(db_manager.get_postgres_session())
+def get_streak_event_repository(db_session: Session | None = None) -> StreakEventRepository:
+    close_after = False
+    if db_session is None:
+        db_session = SessionLocal()
+        close_after = True
+    repo = StreakEventRepository(db_session)
+    setattr(repo, "_close_session_on_finish", close_after)
+    return repo
+
+#def get_journal_repository() -> JournalRepository:
+    #return JournalRepository(db_manager.mongo_collection)
 def get_journal_repository() -> JournalRepository:
-    return JournalRepository(db_manager.mongo_collection)
+    """Journal repository uses the module-level mongo collection created earlier."""
+    return JournalRepository(journal_collection)
 
-def get_achievement_repository() -> AchievementRepository:
-    return AchievementRepository(db_manager.get_postgres_session())
+
+#def get_achievement_repository() -> AchievementRepository:
+    #return AchievementRepository(db_manager.get_postgres_session())
+def get_achievement_repository(db_session: Session | None = None) -> AchievementRepository:
+    close_after = False
+    if db_session is None:
+        db_session = SessionLocal()
+        close_after = True
+    repo = AchievementRepository(db_session)
+    setattr(repo, "_close_session_on_finish", close_after)
+    return repo
+
+#if __name__ == "__main__":
+    #db_manager = DatabaseManager()
 
 
 # Function to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+#def get_db():
+    #db = SessionLocal()
+    #try:
+        #yield db
+    #finally:
+        #db.close()
+
+# Import User model so SQLAlchemy knows about it
+#from backend.Auth.models import User
+

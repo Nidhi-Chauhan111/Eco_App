@@ -3,17 +3,25 @@
 
 import os
 import sys
+
+# Add project paths
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))  #for config.py of journal
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../Database'))
+sys.path.append(os.path.dirname(__file__))
+
+
 from datetime import datetime, date
 from typing import Dict, Any
 import json
 
-# Add project paths
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../Database'))
-sys.path.append(os.path.dirname(__file__))
+
 
 # Import our services
-from journal_service import EcoJournalService
-from config import Config
+from backend.Journal.journal_service import EcoJournalService
+from backend.Journal.config import Config
+from Database.Journal import DatabaseManager
+
+db_manager = DatabaseManager()
 
 class EcoJournalCLI:
     """Command-line interface for Eco-Journal testing"""
