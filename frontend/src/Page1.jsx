@@ -20,7 +20,7 @@ const Page1 = () => {
       <div className="page1-content">
         <div className="text-content">
           <h1>
-            🌸 Welcome to <span className="highlight">CAnoPY</span>
+             Welcome to <span className="highlight">CANOPY</span>
           </h1>
           <p className="tagline">
             <em>Reflect. Act. Grow Greener Every Day.</em>

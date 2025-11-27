@@ -32,15 +32,15 @@ export default function CarbonCalculatorForm({ onCalculate }) {
       <h2>Carbon Footprint Calculator</h2>
       <label>
         Flights per year:
-        <input type="number" min="0" value={travel} onChange={e => setTravel(e.target.value)} />
+        <input type="text" min="0" value={travel} onChange={e => setTravel(e.target.value)} />
       </label>
       <label>
         Car km per week:
-        <input type="number" min="0" value={carKm} onChange={e => setCarKm(e.target.value)} />
+        <input type="text" min="0" value={carKm} onChange={e => setCarKm(e.target.value)} />
       </label>
       <label>
         Monthly electricity usage (kWh):
-        <input type="number" min="0" value={energy} onChange={e => setEnergy(e.target.value)} />
+        <input type="text" min="0" value={energy} onChange={e => setEnergy(e.target.value)} />
       </label>
       <label>
         Diet type:

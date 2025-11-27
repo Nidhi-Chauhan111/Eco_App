@@ -1,5 +1,6 @@
 // src/CalculatorComponent.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 
 /*
   Styled Calculator (guided) — purely visual changes:
@@ -10,7 +11,7 @@ import React, { useState } from "react";
   - SectionCard variants and badgeEmoji added for nicer look
 */
 
-export default function CalculatorComponent({ apiUrl = "/api/calculate", saveToLocal = true }) {
+export default function CalculatorComponent({ apiUrl = "/calculator/calculate", saveToLocal = true }) {
   // --- states for each category ---
   const [transport, setTransport] = useState({
     car_owner: false,
@@ -48,6 +49,8 @@ export default function CalculatorComponent({ apiUrl = "/api/calculate", saveToL
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [results, setResults] = useState(null);
+
+  const navigate = useNavigate();
 
   // --- updaters (store strings so long numbers display without formatting) ---
   const updateTransport = (k, v) => setTransport((t) => ({ ...t, [k]: v }));
@@ -97,6 +100,10 @@ export default function CalculatorComponent({ apiUrl = "/api/calculate", saveToL
     payload.waste = { levels: { ...waste.levels }, recycling: { ...waste.recycling }, compost: waste.compost };
 
     return payload;
+  }
+
+  function getAuthToken() {
+    return localStorage.getItem("access_token") || localStorage.getItem("token") || null;
   }
 
   // Place this inside your CalculatorComponent function, before the `return(...)`
@@ -202,44 +209,91 @@ export default function CalculatorComponent({ apiUrl = "/api/calculate", saveToL
 
   // Unified calculate handler: tries API POST then falls back to localCalculate
   async function handleCalculate(e) {
-    e && e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setResults(null);
+  e && e.preventDefault();
+  setLoading(true);
+  setError(null);
+  setResults(null);
 
-    const payload = buildPayload(); // ensure buildPayload() exists in your component
+  const payload = buildPayload(); // your existing function
+  const token = getAuthToken();
 
-    try {
-      const res = await fetch(apiUrl, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(payload) });
-      if (!res.ok) {
-        console.warn("Server returned error", res.status);
-        const local = localCalculate(payload);
-        setResults(local); setStep(4);
-        if (saveToLocal) localStorage.setItem("last_calc", JSON.stringify(local));
-        return;
-      }
-      const json = await res.json().catch(()=>null);
-      if (!json) {
-        const local = localCalculate(payload);
-        setResults(local); setStep(4);
-        if (saveToLocal) localStorage.setItem("last_calc", JSON.stringify(local));
-        return;
-      }
-      setResults(json); setStep(4);
-      if (saveToLocal) localStorage.setItem("last_calc", JSON.stringify(json));
-    } catch (err) {
-      console.warn("Fetch failed, using local fallback:", err);
-      try {
-        const local = localCalculate(payload);
-        setResults(local); setStep(4);
-        if (saveToLocal) localStorage.setItem("last_calc", JSON.stringify(local));
-      } catch (ex) {
-        setError("Calculation failed: " + (ex.message || ex));
-      }
-    } finally {
-      setLoading(false);
+  // helper to normalize backend response -> the component expects a results-like object
+  function applyResults(respData) {
+    if (!respData) return;
+    // backend may return { message, summary, results } or directly results/summary
+    let normalized = null;
+    if (respData.results) {
+      normalized = respData.results;
+    } else if (respData.summary && (respData.transportation || respData.energy)) {
+      // looks like full results object
+      normalized = respData;
+    } else {
+      normalized = respData; // best-effort fallback
     }
+    setResults(normalized);
+    if (saveToLocal) localStorage.setItem("last_calc", JSON.stringify(normalized));
   }
+  
+
+  try {
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      // server returned an error (auth expired / validation / server error)
+      console.warn("Server returned non-OK status:", res.status);
+      // try to read server error to show to user
+      try {
+        const errJson = await res.json().catch(() => null);
+        if (errJson && errJson.detail) setError(`Server: ${errJson.detail}`);
+      } catch (err) {
+        // ignore parse errors
+      }
+      // fallback to local calculation so UX isn't blocked
+      const local = localCalculate(payload);
+      setResults(local);
+      setStep(4);
+      if (saveToLocal) localStorage.setItem("last_calc", JSON.stringify(local));
+      return;
+    }
+
+    // parse server JSON
+    const json = await res.json().catch(() => null);
+    if (!json) {
+      // non-JSON response -> fallback to local
+      const local = localCalculate(payload);
+      setResults(local);
+      setStep(4);
+      if (saveToLocal) localStorage.setItem("last_calc", JSON.stringify(local));
+      return;
+
+
+    }
+
+    // success: use API response
+    applyResults(json);
+    setStep(4);
+  } catch (err) {
+    // network or unexpected error -> local fallback
+    console.warn("Fetch failed, using local fallback:", err);
+    try {
+      const local = localCalculate(payload);
+      setResults(local);
+      setStep(4);
+      if (saveToLocal) localStorage.setItem("last_calc", JSON.stringify(local));
+    } catch (ex) {
+      setError("Calculation failed: " + (ex.message || ex));
+    }
+  } finally {
+    setLoading(false);
+  }
+}
 
 
   // navigation
@@ -632,6 +686,7 @@ export default function CalculatorComponent({ apiUrl = "/api/calculate", saveToL
           </div>
         </div>
       </div>
+    
 
       <h4 className="muted-label" style={{ marginTop: "20px" }}>Breakdown by Category</h4>
       <div className="breakdown-horizontal">
@@ -651,6 +706,25 @@ export default function CalculatorComponent({ apiUrl = "/api/calculate", saveToL
           </div>
         ))}
       </div>
+      {/* GET SUGGESTIONS BUTTON  */}
+      <div style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "center" }}>
+        <button
+          className="warm-btn"
+          onClick={() => {
+            try {
+              const payload = buildPayload();
+              localStorage.setItem("last_payload", JSON.stringify(payload));
+              localStorage.setItem("last_calc", JSON.stringify(results));
+              navigate("/suggestions", { state: { payload, results } });
+            } catch (err) {
+              console.warn("Failed to navigate to suggestions:", err);
+            }
+          }}
+        >
+          Get Habit Suggestions
+        </button>
+      </div>
+
     </div>
   );
 }

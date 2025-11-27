@@ -174,17 +174,17 @@ class TransportationCalculator(CategoryCalculator):
         recommendations = []
 
         if emissions > 50:  # High transport emissions
-            recommendations.append("🚴 Consider cycling or walking for short trips (<5 km)")
-            recommendations.append("🚌 Use public transport more frequently")
+            recommendations.append(" Consider cycling or walking for short trips (<5 km)")
+            recommendations.append(" Use public transport more frequently")
 
         if 'car' in inputs and inputs['car']['type'] in ['Car (Petrol)', 'Car (Diesel)']:
-            recommendations.append("⚡ Consider switching to an electric or hybrid vehicle")
+            recommendations.append(" Consider switching to an electric or hybrid vehicle")
 
         if 'flights' in inputs and inputs['flights']['domestic_per_year'] > 4:
-            recommendations.append("✈️ Reduce domestic flights - try trains for shorter distances")
+            recommendations.append(" Reduce domestic flights - try trains for shorter distances")
 
         if emissions < 10:
-            recommendations.append("🌟 Great job! Your transport footprint is very low")
+            recommendations.append(" Great job! Your transport footprint is very low")
 
         return recommendations
 
@@ -261,17 +261,17 @@ class EnergyCalculator(CategoryCalculator):
         recommendations = []
 
         if emissions > 200:  # High energy emissions
-            recommendations.append("💡 Switch to LED lighting and energy-efficient appliances")
-            recommendations.append("🌡️ Optimize heating/cooling - use programmable thermostats")
+            recommendations.append(" Switch to LED lighting and energy-efficient appliances")
+            recommendations.append(" Optimize heating/cooling - use programmable thermostats")
 
         if 'electricity' in inputs:
             if inputs['electricity']['grid_type'] == 'Electricity (Coal-heavy)':
-                recommendations.append("☀️ Consider installing solar panels or switching to green energy")
+                recommendations.append(" Consider installing solar panels or switching to green energy")
             if inputs['electricity']['kwh_per_month'] > 400:
-                recommendations.append("⚡ Your electricity usage is high - audit your appliances")
+                recommendations.append(" Your electricity usage is high - audit your appliances")
 
         if emissions < 50:
-            recommendations.append("🌟 Excellent! Your home energy footprint is very efficient")
+            recommendations.append(" Excellent! Your home energy footprint is very efficient")
 
         return recommendations
 
@@ -354,17 +354,17 @@ class FoodCalculator(CategoryCalculator):
         total_meat = sum(inputs.get('meat', {}).values())
 
         if total_meat > 2:  # High meat consumption
-            recommendations.append("🥩 Consider reducing red meat consumption - try chicken or plant proteins")
-            recommendations.append("🌱 Add more plant-based meals to your weekly diet")
+            recommendations.append(" Consider reducing red meat consumption - try chicken or plant proteins")
+            recommendations.append(" Add more plant-based meals to your weekly diet")
 
         if inputs.get('meat', {}).get('beef', 0) > 0.5:
-            recommendations.append("🐄 Beef has the highest carbon footprint - try substituting with chicken")
+            recommendations.append(" Beef has the highest carbon footprint - try substituting with chicken")
 
         if emissions > 50:
-            recommendations.append("🥗 Your diet has high emissions - focus on more vegetables and less meat")
+            recommendations.append(" Your diet has high emissions - focus on more vegetables and less meat")
 
         if emissions < 20:
-            recommendations.append("🌟 Great! You have a low-carbon diet")
+            recommendations.append(" Great! You have a low-carbon diet")
 
         return recommendations
 
@@ -467,6 +467,7 @@ class CarbonFootprintCalculator:
 
         # Save results
         self.save_results()
+    
 
     def compare_to_benchmarks(self, total_annual: float):
         """Compare user's footprint to global averages"""
@@ -568,6 +569,56 @@ class CarbonFootprintCalculator:
         except Exception as e:
             print(f"❌ Error saving results: {e}")
     
+    def generate_recommendations_from_results(self, results: dict) -> dict:
+        """
+        Use existing per-category calculators to create combined recommendations
+        Returns a dictionary with ordered recommendations and per-category lists.
+        """
+        try:
+            transport_recs = self.transport_calc.get_recommendations(
+                results.get('transportation', {}).get('weekly_kg_co2', 0),
+                results.get('transportation', {}).get('inputs', {})
+            )
+            energy_recs = self.energy_calc.get_recommendations(
+                results.get('energy', {}).get('weekly_kg_co2', 0),
+                results.get('energy', {}).get('inputs', {})
+            )
+            food_recs = self.food_calc.get_recommendations(
+                results.get('food', {}).get('weekly_kg_co2', 0),
+                results.get('food', {}).get('inputs', {})
+            )
+            waste_recs = self.waste_calc.get_recommendations(
+                results.get('waste', {}).get('weekly_kg_co2', 0),
+                results.get('waste', {}).get('inputs', {})
+            )
+
+            # keep order: energy -> transport -> food -> waste (you can change)
+            all_recs = []
+            for cat, recs in (('energy', energy_recs), ('transport', transport_recs),
+                              ('food', food_recs), ('waste', waste_recs)):
+                for r in recs:
+                    all_recs.append({"category": cat, "text": r})
+
+            # dedupe preserving order
+            seen = set()
+            deduped = []
+            for r in all_recs:
+                key = (r['category'], r['text'])
+                if key in seen:
+                    continue
+                seen.add(key)
+                deduped.append(r)
+
+            return {
+                "count": len(deduped),
+                "recommendations": deduped
+            }
+        except Exception as e:
+            # safe fallback
+            print(f"❌ Error generating recommendations: {e}")
+            return {"count": 0, "recommendations": []}
+
+
     def calculate_from_payload(self, payload: dict):
         """
         Calculate carbon footprint directly from JSON payload (for API use)
@@ -590,18 +641,22 @@ class CarbonFootprintCalculator:
                 "transportation": {
                     "weekly_kg_co2": transport_emissions,
                     "annual_kg_co2": transport_emissions * 52,
+                    "inputs": transport_inputs,
                 },
                 "energy": {
                     "weekly_kg_co2": energy_emissions,
                     "annual_kg_co2": energy_emissions * 52,
+                    "inputs": energy_inputs,
                 },
                 "food": {
                     "weekly_kg_co2": food_emissions,
                     "annual_kg_co2": food_emissions * 52,
+                    "inputs": food_inputs,        
                 },
                 "waste": {
                     "weekly_kg_co2": waste_emissions,
                     "annual_kg_co2": waste_emissions * 52,
+                    "inputs": waste_inputs,
                 },
             }
 
@@ -745,20 +800,20 @@ class WasteCalculator(CategoryCalculator):
         compost = (inputs['compost'] == 'yes')
 
         if levels['plastic'] in ('medium','high') and recycling['plastic']=='no':
-            recs.append("🛍️ Reduce single-use plastic; start with a reusable bottle and bags.")
-            recs.append("♻️ Begin segregating plastic and find a local recycler.")
+            recs.append(" Reduce single-use plastic; start with a reusable bottle and bags.")
+            recs.append(" Begin segregating plastic and find a local recycler.")
 
         if levels['paper'] in ('medium','high') and recycling['paper']=='no':
-            recs.append("📦 Flatten & recycle cardboard; switch to e-bills where possible.")
+            recs.append(" Flatten & recycle cardboard; switch to e-bills where possible.")
 
         if levels['glass'] in ('medium','high') and recycling['glass']=='no':
-            recs.append("🍾 Rinse bottles/cans and recycle; look for return/deposit programs.")
+            recs.append(" Rinse bottles/cans and recycle; look for return/deposit programs.")
 
         if levels['organic'] in ('medium','high') and not compost:
-            recs.append("🍂 Start basic composting or use a community compost drop-off.")
+            recs.append(" Start basic composting or use a community compost drop-off.")
 
         if emissions < 5:
-            recs.append("🌟 Great job! Your waste footprint is quite low this week.")
+            recs.append(" Great job! Your waste footprint is quite low this week.")
 
         return recs
 

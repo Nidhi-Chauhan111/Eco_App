@@ -12,6 +12,7 @@ from Database.db import get_db
 #from Database.Journal import get_db
 from backend.Auth import service
 from backend.Auth.schemas import UserCreate, UserLogin  # ✅ import from schemas.py
+from backend.Auth.deps import get_current_user
 
 
 
@@ -32,6 +33,22 @@ def login(user: UserLogin, db: Session = Depends(get_db), Authorize: AuthJWT = D
 
     access_token = Authorize.create_access_token(subject=str(db_user.id))
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/me")
+def get_me(current_user_id: int = Depends(get_current_user)):
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.id == current_user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return {
+            "id": user.id,
+            "email": user.email,
+            "name": getattr(user, "name", None) or user.email.split("@")[0],
+            "profile_pic_url": getattr(user, "profile_pic", None)  # may be None
+        }
+    finally:
+        db.close()
 
 
 

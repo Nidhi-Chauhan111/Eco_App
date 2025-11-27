@@ -55,7 +55,7 @@ function Login() {
       const data = await response.json();
       alert("Login successful!");
       localStorage.setItem("token", data.access_token);
-      navigate("/dashboard");
+      navigate("/Calculator");
     } catch (error) {
       console.error("Login Error:", error);
       alert("Login failed. Please check backend connection.");

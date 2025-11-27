@@ -124,6 +124,7 @@ class EcoJournalService:
             entry_summary = self._create_entry_summary(recent_entries)
             
             dashboard = {
+                'success': True, 
                 'user_id': user_id,
                 'streak_status': streak_status,
                 'recent_entries': {
@@ -140,7 +141,7 @@ class EcoJournalService:
             
         except Exception as e:
             logger.error(f"Failed to generate dashboard for user {user_id}: {e}")
-            return {'error': str(e), 'user_id': user_id}
+            return {'success': False, 'error': str(e), 'user_id': user_id}
     
     def get_inspiration_for_mood(self, user_id: str, mood: str) -> Dict[str, str]:
         """

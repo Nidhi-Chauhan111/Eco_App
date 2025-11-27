@@ -55,7 +55,7 @@ class EcoJournalCLI:
     
     def run(self):
         """Main CLI loop"""
-        print("🌱 Welcome to the Eco-Journal System!")
+        print("🌱 the Eco-Journal System!")
         print("This system analyzes your eco-habits and provides motivational insights.")
         
         while True:

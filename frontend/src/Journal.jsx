@@ -1,303 +1,346 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./App.css";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+
+/**
+ * Journal component integrated to backend:
+ * - POST /journal/entry  (requires Authorization)
+ * - GET  /journal/dashboard (requires Authorization)
+ * - GET  /journal/entries/{user_id}  (public)
+ *
+ * API base (default): http://127.0.0.1:8000
+ * You can override by setting REACT_APP_API_URL.
+ */
+const API_BASE = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+
+function getAuthHeaders() {
+  const token = localStorage.getItem("access_token") || localStorage.getItem("token");
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  return headers;
+}
 
 export default function Journal() {
-  const [entry, setEntry] = useState("");
+  const [entryText, setEntryText] = useState("");
   const [entries, setEntries] = useState([]);
-  const [mood, setMood] = useState("");
-  const [streak, setStreak] = useState(0);
-  const [lastDate, setLastDate] = useState("");
-  const [quote, setQuote] = useState("");
-  const [sentiment, setSentiment] = useState("Neutral");
-  const [showPopup, setShowPopup] = useState(false); // ⭐ ADDED
+  const [dashboard, setDashboard] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [popup, setPopup] = useState(null); // { sentiment, emotion_summary, inspiration }
+  const [userId, setUserId] = useState(null);
+  const entryRef = useRef();
 
-  const moods = [
-    { emoji: "😊", label: "Happy" },
-    { emoji: "😌", label: "Calm" },
-    { emoji: "😢", label: "Sad" },
-    { emoji: "😤", label: "Stressed" },
-    { emoji: "🌿", label: "Peaceful" },
-  ];
+  // load dashboard (streak + user id + analytics + recommendations)
+  async function loadDashboard() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE}/journal/dashboard`, {
+        method: "GET",
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) {
+        const txt = await res.text().catch(() => null);
+        throw new Error(txt || `Dashboard fetch failed (${res.status})`);
+      }
+      const json = await res.json();
+      setDashboard(json);
+      // user id helpful for entries endpoint (dashboard contains user_id)
+      if (json && json.user_id) setUserId(json.user_id);
+      // after we have user id, fetch entries
+      if (json && json.user_id) {
+        loadEntries(json.user_id);
+      } else {
+        // fallback: try default user id from backend config "1"
+        loadEntries(1);
+      }
+    } catch (err) {
+      console.warn("Dashboard load failed:", err);
+      setError("Failed to load dashboard. Please check your login / backend.");
+      // Still attempt to load entries for default user
+      loadEntries(1);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  // 🌿 Load stored data on mount
+  // load entries for a given user id
+  async function loadEntries(id) {
+    if (!id) return;
+    try {
+      const res = await fetch(`${API_BASE}/journal/entries/${id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) {
+        console.warn("Entries fetch failed:", res.status);
+        setEntries([]);
+        return;
+      }
+      const json = await res.json();
+      // backend returns { success: true, entries: [...] }
+      setEntries((json && json.entries) || []);
+    } catch (err) {
+      console.warn("Could not load entries:", err);
+      setEntries([]);
+    }
+  }
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("ecoJournalEntries")) || [];
-    const savedStreak = localStorage.getItem("ecoJournalStreak");
-    const savedLastDate = localStorage.getItem("ecoJournalLastDate");
-
-    setEntries(stored);
-    if (savedStreak) setStreak(parseInt(savedStreak, 10));
-    if (savedLastDate) setLastDate(savedLastDate);
+    // focus textarea on mount
+    entryRef.current?.focus();
+    loadDashboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 🌞 Daily Inspirational Quote
-  useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    const saved = JSON.parse(localStorage.getItem("ecoJournalQuote"));
+  // Submit a journal entry
+  async function submitEntry() {
+    const text = (entryText || "").trim();
+    if (!text) return setError("Please write something before saving.");
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE}/journal/entry`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ content: text }),
+      });
 
-    if (saved && saved.date === today) {
-      setQuote(saved.text);
-    } else {
-      const quotes = [
-        "Every small step counts toward a greener planet 🌿",
-        "Nature always wears the colors of the spirit 🌈",
-        "Plant dreams, pull weeds, and grow a happy life 🌱",
-        "The Earth is what we all have in common 🌍",
-        "You are blooming at your own pace 🌸",
-      ];
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-      setQuote(randomQuote);
-      localStorage.setItem(
-        "ecoJournalQuote",
-        JSON.stringify({ date: today, text: randomQuote })
-      );
+      const json = await (res.json().catch(() => null));
+      if (!res.ok) {
+        console.warn("Journal post failed:", res.status, json);
+        setError((json && json.detail) || (json && json.error) || "Failed to save entry");
+        // do not early return — still show fallback local save? (we avoid)
+        setSaving(false);
+        return;
+      }
+
+      // Backend returns: success, entry_id, analysis, inspiration, streak, processed_at
+      // We'll show popup using analysis + inspiration and update UI locally.
+      if (json && json.success) {
+        const newEntry = {
+          _id: json.entry_id || `local-${Date.now()}`,
+          content: text,
+          analysis: json.analysis || {},
+          inspiration: json.inspiration || "",
+          created_at: json.processed_at || new Date().toISOString(),
+        };
+
+        // Prepend to entries list and update dashboard state with new streak
+        setEntries((prev) => [newEntry, ...prev]);
+        if (json.streak) {
+          setDashboard((d) => ({ ...(d || {}), streak_status: json.streak }));
+        }
+
+        // show popup summarizing sentiment/inspiration
+        const popupContent = {
+          sentiment: (json.analysis && json.analysis.sentiment && json.analysis.sentiment.label) || "Neutral",
+          emotion_summary: (json.analysis && json.analysis.emotion_summary) || "",
+          inspiration: json.inspiration || "",
+        };
+        setPopup(popupContent);
+        // clear textarea
+        setEntryText("");
+        // auto-dismiss popup after 4s
+        setTimeout(() => setPopup(null), 4200);
+      } else {
+        setError("Server did not accept entry.");
+      }
+    } catch (err) {
+      console.warn("Submit entry error:", err);
+      setError("Network error while saving entry.");
+    } finally {
+      setSaving(false);
     }
-  }, []);
+  }
 
-  // 💖 Sentiment Analysis
-  const analyzeSentiment = (text) => {
-    const positiveWords = [
-      "happy",
-      "great",
-      "love",
-      "joy",
-      "peace",
-      "calm",
-      "excited",
-      "grateful",
-      "wonderful",
-      "good",
-      "awesome",
-    ];
-    const negativeWords = [
-      "sad",
-      "angry",
-      "tired",
-      "stress",
-      "upset",
-      "bad",
-      "worried",
-      "anxious",
-      "hate",
-      "cry",
-    ];
+  // Delete entry locally (frontend only) — backend delete not available in provided routes
+  function deleteLocalEntry(id) {
+    setEntries((prev) => prev.filter((e) => e._id !== id));
+  }
 
-    const lower = text.toLowerCase();
-    let score = 0;
-
-    positiveWords.forEach((w) => {
-      if (lower.includes(w)) score++;
-    });
-    negativeWords.forEach((w) => {
-      if (lower.includes(w)) score--;
-    });
-
-    if (score > 1) return "Positive 😊";
-    if (score < -1) return "Negative 😔";
-    return "Neutral 😐";
-  };
-
-  useEffect(() => {
-    if (entry.trim().length > 0) {
-      setSentiment(analyzeSentiment(entry));
-    } else {
-      setSentiment("Neutral");
+  // small helper for prettified date
+  function fmtDate(iso) {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      return d.toLocaleDateString() + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } catch {
+      return iso;
     }
-  }, [entry]);
-
-  // ✍️ Save Entry
-  const saveEntry = () => {
-    if (entry.trim() === "") return;
-    const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
-
-    const newEntry = {
-      id: Date.now(),
-      text: entry.trim(),
-      mood,
-      sentiment,
-      date: todayStr,
-      time: today.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-
-    const updated = [newEntry, ...entries];
-    setEntries(updated);
-    localStorage.setItem("ecoJournalEntries", JSON.stringify(updated));
-    setEntry("");
-    setMood("");
-    setSentiment("Neutral");
-    updateStreak(todayStr); // ⭐ Calls streak update each save
-  };
-
-  // 🔥 Update streak logic (improved + popup)
-  const updateStreak = (todayStr) => {
-    if (!lastDate) {
-      setStreak(1);
-      setLastDate(todayStr);
-      localStorage.setItem("ecoJournalStreak", "1");
-      localStorage.setItem("ecoJournalLastDate", todayStr);
-      showStreakPopup(1); // ⭐ show popup
-      return;
-    }
-
-    const last = new Date(lastDate);
-    const today = new Date(todayStr);
-    const diffDays = Math.floor((today - last) / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 1) {
-      const newStreak = streak + 1;
-      setStreak(newStreak);
-      setLastDate(todayStr);
-      localStorage.setItem("ecoJournalStreak", newStreak.toString());
-      localStorage.setItem("ecoJournalLastDate", todayStr);
-      showStreakPopup(newStreak); // ⭐ popup when streak increases
-    } else if (diffDays > 1) {
-      // Skipped one or more days → reset to 1
-      setStreak(1);
-      setLastDate(todayStr);
-      localStorage.setItem("ecoJournalStreak", "1");
-      localStorage.setItem("ecoJournalLastDate", todayStr);
-      showStreakPopup(1); // ⭐ show reset popup
-    } else {
-      // Same day — no change
-      setLastDate(todayStr);
-      localStorage.setItem("ecoJournalLastDate", todayStr);
-    }
-  };
-
-  // ⭐ Streak popup handler
-  const showStreakPopup = (count) => {
-    setShowPopup(true);
-    setTimeout(() => setShowPopup(false), 2500);
-  };
-
-  // ❌ Delete Entry
-  const deleteEntry = (id) => {
-    const updated = entries.filter((e) => e.id !== id);
-    setEntries(updated);
-    localStorage.setItem("ecoJournalEntries", JSON.stringify(updated));
-  };
-
-  // 📊 Insights
-  const currentMonth = new Date().toISOString().slice(0, 7);
-  const monthlyEntries = entries.filter((e) => e.date.startsWith(currentMonth));
-  const moodCounts = moods.map((m) => ({
-    mood: m.label,
-    emoji: m.emoji,
-    count: monthlyEntries.filter((e) => e.mood === m.label).length,
-  }));
-
-  const totalEntries = monthlyEntries.length;
-  const topMood =
-    moodCounts.sort((a, b) => b.count - a.count)[0]?.label || "None";
+  }
 
   return (
-    <div className="journal-page">
-      <div className="journal-container">
-        {/* LEFT SIDE */}
-        <div className="journal-left paper">
+    <div className="journal-root">
+      <div className="journal-main">
+        <div className="journal-left card">
           <div className="journal-header">
-            <h1>🌿 Eco Journal</h1>
-            <p>Reflect. Write. Grow Greener Each Day.</p>
-            <div className="inspiration-box">💭 <em>{quote}</em></div>
-            <div className="streak-box">
-              🔥 {streak}-day streak{" "}
-              {lastDate && <span>(Last: {lastDate})</span>}
-            </div>
+            <h1>Eco Journal</h1>
+            <p className="sub">Reflect. Track your streak. Grow greener.</p>
           </div>
 
           <div className="journal-form">
             <textarea
-              value={entry}
-              onChange={(e) => setEntry(e.target.value)}
-              placeholder="Dear Journal, today I..."
+              ref={entryRef}
+              placeholder="Write about something you did for the environment today, how you felt, or anything on your mind..."
+              value={entryText}
+              onChange={(e) => setEntryText(e.target.value)}
+              maxLength={3000}
             />
-            <p className={`sentiment-tag ${sentiment.toLowerCase().split(" ")[0]}`}>
-              Sentiment: {sentiment}
-            </p>
+            <div className="form-bottom">
+              <div className="sentiment-preview muted">
+                {entryText.trim().length === 0 ? "Tip: be honest — small actions matter." : `Preview length: ${entryText.length} chars`}
+              </div>
 
-            <div className="mood-selector">
-              {moods.map((m) => (
+              <div className="controls">
                 <button
-                  key={m.label}
-                  className={`mood-btn ${mood === m.label ? "selected" : ""}`}
-                  onClick={() => setMood(m.label)}
+                  className="btn secondary"
+                  onClick={() => {
+                    setEntryText("");
+                    setError(null);
+                  }}
+                  disabled={saving || entryText.trim().length === 0}
                 >
-                  {m.emoji}
+                  Clear
                 </button>
-              ))}
+                <button className="btn primary" onClick={submitEntry} disabled={saving || entryText.trim().length === 0}>
+                  {saving ? "Saving…" : "Save Entry"}
+                </button>
+              </div>
             </div>
-            <button onClick={saveEntry} className="journal-btn">
-              ✍️ Save Entry
-            </button>
+
+            {error && <div className="error-box">{error}</div>}
+          </div>
+
+          {/* Dashboard (streak / badges / quick stats) */}
+          <div className="dashboard card light">
+            <h3>Streak & Dashboard</h3>
+            {loading ? (
+              <p className="muted">Loading...</p>
+            ) : dashboard && dashboard.streak_status ? (
+              <>
+                <div className="streak-row">
+                  <div className="streak-box">
+                    <div className="streak-number">{dashboard.streak_status.current_streak}</div>
+                    <div className="streak-label">current streak (days)</div>
+                  </div>
+
+                  <div className="streak-meta">
+                    <div>Longest: <strong>{dashboard.streak_status.longest_streak}</strong></div>
+                    <div>Total entries: <strong>{dashboard.streak_status.total_entries}</strong></div>
+                    <div className={`risk ${dashboard.streak_status.streak_at_risk ? "warn" : ""}`}>
+                      {dashboard.streak_status.streak_at_risk ? "Streak at risk" : "On track"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Next milestone */}
+                {dashboard.streak_status.next_milestone && (
+                  <div className="milestone">
+                    <div className="muted">Next: {dashboard.streak_status.next_milestone.name}</div>
+                    <div className="progress-row">
+                      <div className="progress-bar">
+                        <div style={{ width: `${dashboard.streak_status.next_milestone.progress_percentage}%` }} />
+                      </div>
+                      <div className="muted small">{Math.round(dashboard.streak_status.next_milestone.progress_percentage)}%</div>
+                    </div>
+                    <div className="muted small">Days to milestone: {dashboard.streak_status.next_milestone.days_remaining}</div>
+                  </div>
+                )}
+
+                {/* Achievements preview */}
+                <div className="achievements">
+                  <div className="muted">Badges</div>
+                  <div className="badges-row">
+                    {(dashboard.streak_status.achievements || []).slice(0,3).map((ach, idx) => (
+                      <div key={idx} className="badge">
+                        <div className="badge-emoji">{ach.badge}</div>
+                        <div className="badge-meta">
+                          <div className="badge-name">{ach.achievement_name || ach.name || ach.achievement_name}</div>
+                        </div>
+                      </div>
+                    ))}
+                    {(!dashboard.streak_status.achievements || dashboard.streak_status.achievements.length === 0) && (
+                      <div className="muted small">No badges yet — keep going!</div>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="muted">No dashboard available (login required).</p>
+            )}
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="journal-right paper">
-          <h2 className="section-title">📖 Your Reflections</h2>
-          <div className="entries-list">
+        {/* Right column: entries list + insights */}
+        <div className="journal-right">
+          <div className="card entries">
+            <h3>Recent Entries</h3>
             {entries.length === 0 ? (
-              <p className="empty-text">No entries yet 🌱 Start writing!</p>
+              <p className="muted">No entries yet. Your saved entries will show here.</p>
             ) : (
-              entries.map((e) => (
-                <div key={e.id} className="entry-card">
-                  <div className="entry-header">
-                    <strong>{e.date}</strong>
-                    <button onClick={() => deleteEntry(e.id)}>✖</button>
+              <div className="entries-list">
+                {entries.map((e) => (
+                  <div key={e._id} className="entry">
+                    <div className="entry-head">
+                      <div className="entry-date">{fmtDate(e.created_at)}</div>
+                      <div className="entry-actions">
+                        <button className="mini" onClick={() => deleteLocalEntry(e._id)}>Remove</button>
+                      </div>
+                    </div>
+                    <div className="entry-body">
+                      <div className="entry-text">{e.content}</div>
+                      <div className="entry-meta muted">
+                        Sentiment: <strong>{(e.analysis && e.analysis.sentiment && e.analysis.sentiment.label) || "N/A"}</strong>
+                        {e.inspiration ? <> • Inspiration: <em>{e.inspiration}</em></> : null}
+                      </div>
+                    </div>
                   </div>
-                  <div className="entry-body">
-                    {e.mood && (
-                      <span className="entry-mood">
-                        {moods.find((m) => m.label === e.mood)?.emoji} {e.mood}
-                      </span>
-                    )}
-                    <p>{e.text}</p>
-                    <p className="entry-sentiment">
-                      💬 {e.sentiment || "Neutral 😐"}
-                    </p>
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
 
-          <div className="stats-section">
-            <h2>📊 Monthly Insights</h2>
-            <p>
-              Total entries: <strong>{totalEntries}</strong>
-            </p>
-            <p>
-              Most common mood: <strong>{topMood}</strong>
-            </p>
-            <div className="chart-container">
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={moodCounts}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="emoji" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#9b7e46" radius={6} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          <div className="card insights">
+            <h3>Quick Insights</h3>
+            {dashboard ? (
+              <>
+                <div className="muted">Consistency</div>
+                <div className="big">{dashboard.analytics ? `${dashboard.analytics.consistency_rate}%` : "—"}</div>
+
+                <div className="muted">Recommendations</div>
+                <ul className="muted small">
+                  {(dashboard.recommendations || []).slice(0,5).map((r, i) => <li key={i}>{r}</li>)}
+                  {(!dashboard.recommendations || dashboard.recommendations.length === 0) && <li>No recommendations yet.</li>}
+                </ul>
+              </>
+            ) : (
+              <p className="muted">Load the dashboard to see insights.</p>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ⭐ Popup animation */}
-      {showPopup && (
-        <div className="streak-popup">
-          🔥 Streak Updated! You’re on {streak} day{streak > 1 ? "s" : ""}!
+      {/* Popup for sentiment/inspiration */}
+      {popup && (
+        <div className="popup">
+          <div className="popup-inner">
+            <div className="popup-header">
+              <strong>Entry saved</strong>
+              <span className="popup-close" onClick={() => setPopup(null)}>✖</span>
+            </div>
+            <div className="popup-body">
+              <div className="muted">Sentiment</div>
+              <div className="popup-big">{popup.sentiment}</div>
+              {popup.emotion_summary && <div className="muted small">{popup.emotion_summary}</div>}
+              {popup.inspiration && (
+                <>
+                  <div className="muted" style={{ marginTop: 8 }}>Inspiration</div>
+                  <div className="popup-inspo">{popup.inspiration}</div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
